@@ -1,13 +1,12 @@
 function plot_solution(solution,p0, pf, params)
 
-    figure
+
    
     x(1) =solution.Tf;
     x(params.num_params+1:params.num_params+params.N_dyn) =solution.omega_l;
     x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn)=solution.omega_r;
     [c ceq,  solution_constr] = constraints(x, p0(:), pf(:), params);
-    plot_curve( solution,solution_constr, p0(:), pf(:));
-
+   
 
     DEBUG = true;
 
@@ -18,7 +17,7 @@ if (DEBUG)
    
     plot(solution.time,-params.omega_w_max*ones(size(solution.omega_l)),'k'); hold on; grid on;
     plot(solution.time,params.omega_w_max*ones(size(solution.omega_l)),'k');
-    plot(solution.time,solution.omega_l,'r');
+    plot(solution.time,solution.omega_l,'or-');
     legend({'min','max','opt'});
       ylabel('omega_l')
       
@@ -26,7 +25,7 @@ if (DEBUG)
 
     plot(solution.time,-params.omega_w_max*ones(size(solution.omega_r)),'k'); hold on; grid on;
     plot(solution.time,params.omega_w_max*ones(size(solution.omega_r)),'k');
-    plot(solution.time,solution.omega_r,'r');
+    plot(solution.time,solution.omega_r,'or-');
     legend({'min','max','opt'});
         ylabel('omega_r')
          
@@ -48,6 +47,8 @@ if (DEBUG)
        
     
 end
-    
+    figure
+    plot_curve( solution,solution_constr, p0(:), pf(:));
+
     
 end

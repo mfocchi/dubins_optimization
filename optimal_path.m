@@ -9,7 +9,7 @@ cd(actual_dir);
 
 
 % INITIAL STATE (X,Y, THETA)
-p0 = [0.0; 0.0; -0.]; 
+p0 = [0.0; 0.0; -0.3]; 
 %FINAL STATE  (X,Y, THETA)
 pf = [10.0; 10.0; -1.8]; 
 
@@ -35,7 +35,6 @@ params.slip_fit_coeff.left  = [-0.0591,   -0.2988];
 params.slip_fit_coeff.right = [0.0390,    0.2499 ];
 
 constr_tolerance = 1e-3;
-
 dt=0.001; % only to evaluate solution
  
 omega_l0 = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
@@ -64,7 +63,22 @@ else
     fprintf(2,"Problem didnt converge!\n")
 end
 
- 
+%  
+%  Columns 1 through 20
+% 
+%    42.6469   49.3739   57.9595   65.9621   71.4282   75.6554   79.2172   81.5755   82.8583   82.9973   82.1116   80.3568   78.0422   75.6274   73.1455   71.2756   69.9779   69.7621   70.2964   71.6976
+% 
+%   Columns 21 through 30
+% 
+%    73.9053   76.8496   80.7047   85.1948   90.1750   94.6887   97.6860   89.7350   84.9263   73.9351
+% 
+% solution.Tf
+% 
+% ans =
+% 
+%    92.0659
+
+
 fprintf('cost:  %f\n\n',solution.cost)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)

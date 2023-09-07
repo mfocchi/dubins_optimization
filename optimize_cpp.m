@@ -9,13 +9,11 @@ function solution = optimize_cpp(p0,  pf, params)
     % needs to be fixed for code generation
     constr_tolerance = 1e-3;
     
-    omega_max = 100; 
-    omega_l0 = 40*ones(1,params.N_dyn); %TODO gives issue with 1
-    omega_r0 = 40*ones(1,params.N_dyn);
-    x0 = [ 10 ,  omega_l0,  omega_r0];
-    lb = [ 0  , -omega_max*ones(1,params.N_dyn),  -omega_max*ones(1,params.N_dyn)];
-    ub = [ 100, omega_max*ones(1,params.N_dyn),  omega_max*ones(1,params.N_dyn)];
-
+    omega_l0 = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
+    omega_r0 = 0.5*params.omega_w_max*ones(1,params.N_dyn);
+    x0 = [ 20 ,  omega_l0,  omega_r0];
+    lb = [ 0  , -params.omega_w_max*ones(1,params.N_dyn),  -params.omega_w_max*ones(1,params.N_dyn)];
+    ub = [ 100, params.omega_w_max*ones(1,params.N_dyn),  params.omega_w_max*ones(1,params.N_dyn)];
 
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',constr_tolerance);
@@ -25,11 +23,8 @@ function solution = optimize_cpp(p0,  pf, params)
     toc
 
     solution = eval_solution(x, dt,  p0, pf, params) ;
-    problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
+    solution.problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
     
-    %save('test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-
-
-
+ 
 end
 
