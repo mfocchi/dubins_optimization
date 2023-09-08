@@ -1,4 +1,4 @@
-function cost = cost(x, p0,  pf, params)
+function [cost, cost_components]= cost(x, p0,  pf, params)
 
     Tf =  x(1);
     omega_l = x(params.num_params+1:params.num_params+params.N_dyn); 
@@ -33,6 +33,11 @@ function cost = cost(x, p0,  pf, params)
     tracking = norm(p_f - pf);
     %smoothing = sum(diff(omega_l).^2)+ sum(diff(omega_l).^2);  
     smoothing = sum(diff(v_input).^2)+ sum(diff(omega_input).^2); 
-       
-    cost =    params.w1 * Tf + params.w2 *smoothing  + params.w3 *tracking;
+    
+    cost_components = struct;
+    cost_components.time   =  params.w1 * Tf;
+    cost_components.smoothing   =  params.w2 *smoothing;
+    cost_components.tracking   =  params.w3 *tracking;
+    
+    cost =  cost_components.time  +   cost_components.smoothing +    cost_components.tracking;
 end
