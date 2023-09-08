@@ -36,7 +36,7 @@ params.w2= 1; % smoothing
 params.w3= 0; %soft tracking of end target (is already in the constraints not needed)
 params.w4= 0; % invariant set TODO
 
-
+params.UNICYCLE = false;
 params.omega_w_max = 1000;
 params.omega_max = 1;
 params.omega_min = -1;
