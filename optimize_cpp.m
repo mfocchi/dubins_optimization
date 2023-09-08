@@ -24,13 +24,15 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, params) , options);
     toc
 
-    % evaluate constraint violation 
-    [c ceq, solution_constr] = constraints(x, p0,  pf, params);
+
     
     solution = eval_solution(x, dt,  p0, pf, params) ;
     solution.x = x;
     solution.cost = final_cost;
     solution.problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
+    % evaluate constraint violation 
+    [c ceq, solution_constr] = constraints(x, p0,  pf, params);
+    solution.c = c;    
     solution.solution_constr = solution_constr;
    
  

@@ -1,12 +1,6 @@
 function plot_solution(solution,p0, pf, params)
 
-
-   
-    x(1) =solution.Tf;
-    x(params.num_params+1:params.num_params+params.N_dyn) =solution.omega_l;
-    x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn)=solution.omega_r;
-    [c ceq,  solution_constr] = constraints(x, p0(:), pf(:), params);
-   
+ 
 
     DEBUG = true;
 
@@ -14,10 +8,10 @@ if (DEBUG)
     
     figure
    
-    plot(solution.time,-params.omega_w_max*ones(size(solution.omega_l)),'k'); hold on; grid on;
-    plot(solution.time,params.omega_w_max*ones(size(solution.omega_l)),'k');
-    plot(solution.time,solution.omega_l,'or-');
-    plot(solution.time,solution.omega_r,'ob-');
+    plot(solution.solution_constr.time,-params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k'); hold on; grid on;
+    plot(solution.solution_constr.time,params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k');
+    plot(solution.solution_constr.time,solution.solution_constr.omega_l,'or-');
+    plot(solution.solution_constr.time,solution.solution_constr.omega_r,'ob-');
     legend({'min','max','omega_w_l','omega_w_r'});
     ylabel('omega_w')
   
@@ -52,12 +46,25 @@ if (DEBUG)
     plot(solution.solution_constr.time, solution.solution_constr.omega_input,'ob-') ; hold on;    
     ylabel('omega input')
     
-  
-    
+    if ~params.UNICYCLE
+        figure
+        subplot(2,1,1)
+        [R, i_L, i_R] = evalSlippage(solution.solution_constr.p(3,:), solution.solution_constr.omega_l, solution.solution_constr.omega_r, params);          
+        plot(solution.solution_constr.time, i_L,'ro-') ; hold on;    grid on;
+        plot(solution.solution_constr.time, i_R,'bo-') ;    
+        legend({'iL','iR'});
+        ylabel('slippage')
+        
+        subplot(2,1,2)
+        plot(solution.solution_constr.time, R,'ro-') ; hold on;    grid on;
+        ylabel('radius')
+      
+    end
+
     
 end
     figure
-    plot_curve( solution,solution_constr, p0(:), pf(:));
+    plot_curve( solution,solution.solution_constr, p0(:), pf(:));
 
     
 end
