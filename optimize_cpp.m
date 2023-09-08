@@ -1,5 +1,5 @@
 
-function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, params) 
+function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params) 
     %make it column vector
     p0 = p0(:);
     pf = pf(:);
@@ -9,10 +9,14 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, params)
     % needs to be fixed for code generation
     constr_tolerance = 1e-3;
 
-    x0 = [ 20 ,  omega_l0,  omega_r0];
+    [v_input,omega_input] =  computeVelocitiesFromTracks(omega_l0, omega_r0, params);
+    if  any(v_input >params.v_max) 
+        disp('initialization is unfeasible')
+    end
+    
+    x0 = [ t0 ,  omega_l0,  omega_r0];
     lb = [ 0  , -params.omega_w_max*ones(1,params.N_dyn),  -params.omega_w_max*ones(1,params.N_dyn)];
-    ub = [ 100, params.omega_w_max*ones(1,params.N_dyn),  params.omega_w_max*ones(1,params.N_dyn)];
-
+    ub = [ params.t_max, params.omega_w_max*ones(1,params.N_dyn),  params.omega_w_max*ones(1,params.N_dyn)];
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',constr_tolerance);
 
