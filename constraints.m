@@ -37,34 +37,43 @@ function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
     % pass from target at Tf
     ineq= [ineq norm(p_f - pf) - fixed_slack];
   
+    
+%     omega_l = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
+% omega_r = 0.5*params.omega_w_max*ones(1,params.N_dyn);
     %limits on v  omega
     [v_input,omega_input] =  computeVelocitiesFromTracks(omega_l, omega_r, params);
+    
 %     
 
-%     
-%     for i=1:params.N_dyn     
-%          ineq = [ineq  -omega_input(i)  -params.omega_max ];  % omega  > omega_min ->  omega_min - omega <0
-% 
-%     end 
-% 
-%     for i=1:params.N_dyn     
-%          ineq = [ineq  -v_input(i) params.v_min ]; % v  > v_min ->  v_min - v <0
-%     end 
-%     for i=1:params.N_dyn     
-%          ineq = [ineq  v_input(i) -params.v_max ]; % v  < v_max   ->    v - v_max<0
-%     end 
-% %     
-%     for i=1:params.N_dyn     
-%          ineq = [ineq  omega_input(i)  -params.omega_max ];% omega  < omega_max  ->    omega - omega_max<0
-%     end 
+if params.VELOCITY_LIMITS    
+    for i=1:params.N_dyn     
+         ineq = [ineq  -omega_input(i)  params.omega_min ];  % omega  > omega_min ->  omega_min - omega <0
+    end 
+
+    for i=1:params.N_dyn     
+         ineq = [ineq  omega_input(i)  -params.omega_max ];% omega  < omega_max  ->    omega - omega_max<0
+    end 
     
+    for i=1:params.N_dyn     
+         ineq = [ineq  -v_input(i) params.v_min ]; % v  > v_min ->  v_min - v <0
+    end 
+    for i=1:params.N_dyn     
+         ineq = [ineq  v_input(i) -params.v_max ]; % v  < v_max   ->    v - v_max<0
+    end 
+end
+% %     
+
 %     
    eq = [];
 %     for i=1:params.N_dyn     
-%          eq = [eq  v_input(i)  -params.omega_v_max ];% omega  < omega_max  ->    omega - omega_max<0
+%          eq = [eq  v_input(i)  -params.v_max ];% omega  < omega_max  ->    omega - omega_max<0
 %     end 
 
- 
+    solution_constr.p = [x;y;theta];
+    solution_constr.time = t;
+    solution_constr.final_error_discrete = norm(p_f - pf);
+    solution_constr.v_input = v_input;
+    solution_constr.omega_input = omega_input;
  %
 
 
