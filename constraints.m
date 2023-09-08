@@ -35,7 +35,7 @@ function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
     fixed_slack = 0.02;%*norm(p0 - pf); 
     
     % pass from target at Tf
-    ineq= [ineq norm(p_f - pf) - fixed_slack];
+    ineq= [ineq (norm(p_f - pf) - fixed_slack)];
   
     
 %     omega_l = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
@@ -45,20 +45,24 @@ function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
     
 %     
 
-if params.VELOCITY_LIMITS    
-    for i=1:params.N_dyn     
-         ineq = [ineq  -omega_input(i)  params.omega_min ];  % omega  > omega_min ->  omega_min - omega <0
+if params.VELOCITY_LIMITS 
+    
+    for i=1:params.N_dyn   
+        
+         ineq = [ineq  (-omega_input(i) + params.omega_min) ];  % omega  > omega_min ->  omega_min - omega <0
     end 
 
     for i=1:params.N_dyn     
-         ineq = [ineq  omega_input(i)  -params.omega_max ];% omega  < omega_max  ->    omega - omega_max<0
+      
+         ineq = [ineq  (omega_input(i)  -params.omega_max)];% omega  < omega_max  ->    omega - omega_max<0
     end 
     
     for i=1:params.N_dyn     
-         ineq = [ineq  -v_input(i) params.v_min ]; % v  > v_min ->  v_min - v <0
+         ineq = [ineq  (-v_input(i) + params.v_min) ]; % v  > v_min ->  v_min - v <0
     end 
+    
     for i=1:params.N_dyn     
-         ineq = [ineq  v_input(i) -params.v_max ]; % v  < v_max   ->    v - v_max<0
+         ineq = [ineq  (v_input(i) -params.v_max)]; % v  < v_max   ->    v - v_max<0
     end 
 end
 % %     
