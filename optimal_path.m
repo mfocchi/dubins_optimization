@@ -36,6 +36,7 @@ params.v_max = 2.5;
 params.v_min = -2.5;
 params.VELOCITY_LIMITS = true;
 params.t_max = 40;
+params.slack_target = 0.02;
 
 params.width = 0.606; % [m]
 params.sprocket_radius = 0.0979; % [m]

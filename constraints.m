@@ -30,12 +30,11 @@ function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
     solution_constr.p = [x;y;theta];
     solution_constr.time = t;
     solution_constr.final_error_discrete = norm(p_f - pf);
+    solution_constr.omega_l = omega_l;
+    solution_constr.omega_r = omega_r;
 
-    % ineq are <= 0
-    fixed_slack = 0.02;%*norm(p0 - pf); 
-    
     % pass from target at Tf
-    ineq= [ineq (norm(p_f - pf) - fixed_slack)];
+    ineq= [ineq (norm(p_f - pf) - params.slack_target)];
   
     
 %     omega_l = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
