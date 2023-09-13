@@ -15,7 +15,7 @@ GENCODE = false;
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.3]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [10.0; 10.0; -1.9];
+pf = [1.0; 1.0; -1.9];%pf = [10.0; 10.0; -1.9];
 
 
 params.int_method = 2; %1 ='euler', 2 =  'rk4';
@@ -24,19 +24,20 @@ params.int_steps = 15 ;%cast(5,"int64"); %0 means normal intergation
 params.num_params = 1; %final time
 
 params.w1= 1;  % minimum time 
-params.w2= 1000; % smoothing  
+params.w2= 0; % smoothing   1000
 params.w3= 0; %soft tracking of end target (is already in the constraints not needed)
 params.w4= 0; % invariant set TODO
 
-params.UNICYCLE = false;
+params.UNICYCLE = true;
 params.omega_w_max = 1000;
-params.omega_max = 1;
-params.omega_min = -1;
+params.omega_max = 1.5;
+params.omega_min = -1.5;
 params.v_max = 2.5;
 params.v_min = -2.5;
 params.VELOCITY_LIMITS = true;
 params.t_max = 40;
 params.slack_target = 0.02;
+constr_tolerance = 1e-3;
 
 params.width = 0.606; % [m]
 params.sprocket_radius = 0.0979; % [m]
@@ -57,7 +58,7 @@ if GENCODE
 end
 
 if ~USEGENCODE     
-    constr_tolerance = 1e-3;
+
     dt=0.001; % only to evaluate solution
 
     [v_input,omega_input] =  computeVelocitiesFromTracks(omega_l0, omega_r0, params);
@@ -102,7 +103,15 @@ end
 
 [cost, cost_components] = cost(solution.x, p0,  pf, params);
 fprintf('target constraint violated:  %f\n\n',solution.c(1));
-fprintf('path constraints violated:  %f\n\n',any(solution.c(2:end)>0));
+constr_viol = solution.c(2:end)>constr_tolerance;
+num_constr_viol = sum(constr_viol);
+if num_constr_viol>0
+    index_violated =find(constr_viol);
+    outputstr = repmat('%i ', 1, num_constr_viol) % replicate it to match the number of columns
+    fprintf(strcat('path constraints violated at index:  ', outputstr,'\n'),index_violated);
+else
+    fprintf('path constraints violated:  %i\n\n',num_constr_viol);
+end
 fprintf('cost:  %f\n\n',solution.cost);
 fprintf('cost component: time: %f,  smoothing : %f  \n \n',cost_components.time,  cost_components.smoothing);
 fprintf('target error_real:  %f\n\n',solution.final_error_real)
