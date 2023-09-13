@@ -15,7 +15,8 @@ GENCODE = false;
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.3]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [1.0; 1.0; -1.9];%pf = [10.0; 10.0; -1.9];
+pf = [1; 1.0; -1.9];%pf = [10.0; 10.0; -1.9];
+%pf = [1; -2.0; -1.9];%pf = [10.0; 10.0; -1.9];
 
 
 params.int_method = 2; %1 ='euler', 2 =  'rk4';
@@ -24,16 +25,16 @@ params.int_steps = 15 ;%cast(5,"int64"); %0 means normal intergation
 params.num_params = 1; %final time
 
 params.w1= 1;  % minimum time 
-params.w2= 0; % smoothing   1000
+params.w2= 1000; % smoothing   1000
 params.w3= 0; %soft tracking of end target (is already in the constraints not needed)
 params.w4= 0; % invariant set TODO
 
-params.UNICYCLE = false;
-params.omega_w_max = 1000;
+params.UNICYCLE = true;
+params.omega_w_max = 2000;
 params.omega_max = 5.5;
 params.omega_min = -5.5;
-params.v_max = 2.5;
-params.v_min = 0;%-2.5;
+params.v_max = 1;
+params.v_min = 1;%-2.5;
 params.VELOCITY_LIMITS = true;
 params.t_max = 80;
 params.slack_target = 0.02;
@@ -44,8 +45,8 @@ params.sprocket_radius = 0.0979; % [m]
 params.gearbox_ratio = 39.4;
 params.slip_fit_coeff.left  = [-0.0591,   -0.2988];
 params.slip_fit_coeff.right = [0.0390,    0.2499 ];
-omega_l0 = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
-omega_r0 = 0.5*params.omega_w_max*ones(1,params.N_dyn);
+omega_l0 = 0.0*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
+omega_r0 = 0.0*params.omega_w_max*ones(1,params.N_dyn);
 t0 = norm(pf(1:2) - p0(1:2))/(0.5*params.v_max);  
 
 if GENCODE

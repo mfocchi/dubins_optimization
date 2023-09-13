@@ -26,10 +26,9 @@ plot(solution_constr.p(1,:), solution_constr.p(2,:), 'o', 'Color', color_input )
 
 scaling = 0.1*norm(pf(1:2) - p0(1:2));
 %initial orient
-plotOrientation([p0(1) p0(2)], p0(3), scaling);
+plotOrientation([p0(1); p0(2)], p0(3), scaling);
 %final orient 
-plotOrientation([pf(1) pf(2)], pf(3), scaling);
-
+plotOrientation([pf(1); pf(2)], pf(3), 0.1);
 grid on;
 
 xlabel('X');

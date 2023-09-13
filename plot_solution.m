@@ -79,8 +79,17 @@ if (DEBUG)
     end
     
 end
-    figure
-    plot_curve( solution,solution.solution_constr, p0(:), pf(:));
+figure
+plot_curve( solution,solution.solution_constr, p0(:), pf(:));
 
+
+dubinsObj= dubinsClass;
+% Find optimal Dubins solution
+[pidx, curve] = dubinsObj.dubins_shortest_path(p0(1), p0(2), p0(3), pf(1), pf(2), pf(3), params.omega_max);
+%plot dubin
+dubinsObj.plotdubins(curve, true, [1 0 0], [0 0 0], [1 0 0])
+% dubinsObj.plotarc(curve.a1, [1 0 0]);
+% dubinsObj.plotarc(curve.a2, [0 0 0]);
+% dubinsObj.plotarc(curve.a3, [1 0 0]);
     
 end
