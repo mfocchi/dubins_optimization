@@ -28,14 +28,14 @@ params.w2= 0; % smoothing   1000
 params.w3= 0; %soft tracking of end target (is already in the constraints not needed)
 params.w4= 0; % invariant set TODO
 
-params.UNICYCLE = true;
+params.UNICYCLE = false;
 params.omega_w_max = 1000;
-params.omega_max = 1.5;
-params.omega_min = -1.5;
+params.omega_max = 5.5;
+params.omega_min = -5.5;
 params.v_max = 2.5;
-params.v_min = -2.5;
+params.v_min = 0;%-2.5;
 params.VELOCITY_LIMITS = true;
-params.t_max = 40;
+params.t_max = 80;
 params.slack_target = 0.02;
 constr_tolerance = 1e-3;
 
@@ -93,13 +93,27 @@ else
     solution.achieved_target
 
 end    
+% 
+% 1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
+% 0 Number of iterations exceeded options.MaxIterations or number of function evaluations exceeded options.MaxFunctionEvaluations.
+% -1 Stopped by an output function or plot function.
+% -2 No feasible point was found.
+% 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
 
-if solution.problem_solved
-    fprintf(2,"Problem converged!\n")
-else 
-    fprintf(2,"Problem didnt converge!\n")
+switch solution.problem_solved
+    case 1 
+        fprintf(2,"Problem converged!\n")
+    case -2  
+        fprintf(2,"Problem didnt converge!\n")
+    case 2 
+        fprintf(2,"semidefinite solution (should modify the cost)\n")
+    case 0 
+        fprintf(2,"Max number of feval exceeded (10000)\n")
 end
 
+
+fprintf(2,"number of iterations: %i\n", solution.optim_output.iterations);
+fprintf(2,"number of func evaluations: %i\n", solution.optim_output.funcCount);
 
 [cost, cost_components] = cost(solution.x, p0,  pf, params);
 fprintf('target constraint violated:  %f\n\n',solution.c(1));
