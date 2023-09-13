@@ -1,12 +1,13 @@
 function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have time invariant system t wont be used
-
+    % ideal wheel speed in rad/s
     omega_wheel_l = omega_l / params.gearbox_ratio; % [rad/s]
     omega_wheel_r = omega_r / params.gearbox_ratio; % [rad/s]
     theta = x(3);
 
     r = params.sprocket_radius;
     B = params.width;
-
+    
+    % ideal linear and angular velocity
     v_input = r * (omega_wheel_r + omega_wheel_l) / 2.0;
     omega_input = r * (omega_wheel_r - omega_wheel_l) / B;
     
@@ -26,6 +27,7 @@ function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have tim
         a0_R = params.slip_fit_coeff.right(1);
         a1_R = params.slip_fit_coeff.right(2);
 
+        %slip is estimated from turning radius
         R = abs(turning_radius_input);
         if(turning_radius_input > 0.0) % turning left
             i_L = a0_L / (R + a1_L);
@@ -35,6 +37,8 @@ function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have tim
             i_R = a0_L / (R + a1_L);
             i_L = a0_R / (R + a1_R);
         end
+        
+        
         % Slip cannot reach higher values than 1.0
         if(i_L > 1.0)
             i_L = 1.0;
@@ -42,9 +46,13 @@ function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have tim
         if(i_R > 1.0)
             i_R = 1.0;
         end
-
-        v     = r * (omega_wheel_r * (1-i_R) + omega_wheel_l * (1-i_L)) / 2;
-        Omega = r * (omega_wheel_r * (1-i_R) - omega_wheel_l * (1-i_L)) / B;
+        % estimation of actual wheel speed from slippage
+        omega_wheel_act_r = omega_wheel_r * (1-i_R);
+        omega_wheel_act_l = omega_wheel_r * (1-i_L);
+        
+        % actual linear and angular velocity
+        v     = r * (omega_wheel_act_r + omega_wheel_act_l) / 2;
+        Omega = r * (omega_wheel_act_r - omega_wheel_act_l) / B;
 
         dxdt = [v*cos(theta); v*sin(theta); Omega];
     end
