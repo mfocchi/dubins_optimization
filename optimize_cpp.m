@@ -18,7 +18,7 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     lb = [ 0  , -params.omega_w_max*ones(1,params.N_dyn),  -params.omega_w_max*ones(1,params.N_dyn)];
     ub = [ params.t_max, params.omega_w_max*ones(1,params.N_dyn),  params.omega_w_max*ones(1,params.N_dyn)];
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-    'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',constr_tolerance);
+    'MaxFunctionEvaluations', 100000, 'ConstraintTolerance',constr_tolerance);
 
     tic
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, params) , options);
