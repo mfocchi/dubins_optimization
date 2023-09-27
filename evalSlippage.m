@@ -1,4 +1,4 @@
-function [turning_radius_input, i_L, i_R] = evalSlippage(theta, omega_l, omega_r, params)
+function [R, i_L, i_R] = evalSlippage(theta, omega_l, omega_r, params)
         omega_wheel_l = omega_l / params.gearbox_ratio; % [rad/s]
         omega_wheel_r = omega_r / params.gearbox_ratio; % [rad/s]
    
