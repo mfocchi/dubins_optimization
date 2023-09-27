@@ -1,16 +1,18 @@
 function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have time invariant system t wont be used
+
+    theta = x(3);    
+
     % ideal wheel speed in rad/s
     omega_wheel_l = omega_l / params.gearbox_ratio; % [rad/s]
     omega_wheel_r = omega_r / params.gearbox_ratio; % [rad/s]
-    theta = x(3);
-
     r = params.sprocket_radius;
-    B = params.width;
-    
-    % ideal linear and angular velocity
+    B = params.width; 
+%     % ideal linear and angular velocity
     v_input = r * (omega_wheel_r + omega_wheel_l) / 2.0;
     omega_input = r * (omega_wheel_r - omega_wheel_l) / B;
-    
+
+    % ideal linear and angular velocity
+    %v_input,omega_input] =  computeVelocitiesFromTracks(omega_l, omega_r, params);
     switch (params.model)
         case 'UNICYCLE'
     

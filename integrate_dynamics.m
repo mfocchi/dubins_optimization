@@ -7,7 +7,7 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, omega
     x_vec = x0;
     t_vec = t_; 
  
-    if params.int_method == 1 % euler
+    if strcmp(params.int_method, 'eul') % euler
             % forwatd euler
             for i=1:n_steps-1               
                 x_ = x_ + dt* dynamics(t_, x_, omega_l(i), omega_r(i),  params); % we have time invariant dynamics so t wont count
@@ -15,7 +15,7 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, omega
                 x_vec = [x_vec x_];
                 t_vec = [t_vec t_];
             end
-    elseif  params.int_method == 2 % rk4
+    elseif  strcmp(params.int_method, 'rk4') % rk4
             %https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/
             h = dt;
             F = @(t, x, u1, u2) dynamics(t, x, u1, u2, params); % we have  time invariant dynamics so t wont count
