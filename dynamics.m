@@ -49,7 +49,7 @@ function [dxdt] = dynamics(t, x, omega_l, omega_r, params) % because we have tim
             end
             % estimation of actual wheel speed from slippage
             omega_wheel_act_r = omega_wheel_r * (1-i_R);
-            omega_wheel_act_l = omega_wheel_r * (1-i_L);
+            omega_wheel_act_l = omega_wheel_l * (1-i_L);
 
             % actual linear and angular velocity
             v     = r * (omega_wheel_act_r + omega_wheel_act_l) / 2;
