@@ -7,7 +7,13 @@ function plot_solution(solution,p0, pf, params)
 if (DEBUG)
     
 
-  
+    figure   
+    plot(solution.solution_constr.time,-params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k'); hold on; grid on;
+    plot(solution.solution_constr.time,params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k');
+    plot(solution.solution_constr.time,solution.solution_constr.omega_l,'or-');
+    plot(solution.solution_constr.time,solution.solution_constr.omega_r,'ob-');
+    legend({'min','max','omega_w_l','omega_w_r'});
+    ylabel('omega_w','interpreter','none')
          
     figure
     subplot(3,1,1)
@@ -41,7 +47,7 @@ if (DEBUG)
     
     
     
-    if ~params.UNICYCLE
+    if params.model~='UNICYCLE'
         
         [R, i_L, i_R] = evalSlippage(solution.solution_constr.p(3,:), solution.solution_constr.omega_l, solution.solution_constr.omega_r, params);          
         
@@ -68,14 +74,7 @@ if (DEBUG)
       
        
         
-    else
-            figure   
-            plot(solution.solution_constr.time,-params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k'); hold on; grid on;
-            plot(solution.solution_constr.time,params.omega_w_max*ones(size(solution.solution_constr.omega_l)),'k');
-            plot(solution.solution_constr.time,solution.solution_constr.omega_l,'or-');
-            plot(solution.solution_constr.time,solution.solution_constr.omega_r,'ob-');
-            legend({'min','max','omega_w_l','omega_w_r'});
-            ylabel('omega_w','interpreter','none')
+    
     end
     
 end
