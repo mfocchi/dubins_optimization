@@ -71,7 +71,7 @@
     end
 
     
-     function [pidx, curve] = dubins_shortest_path(obj,x0, y0, th0, xf, yf, thf, Kmax)
+     function [pidx, curve, k, lengths] = dubins_shortest_path(obj,x0, y0, th0, xf, yf, thf, Kmax)
       % Compute params of standard scaled problem
       [sc_th0, sc_thf, sc_Kmax, lambda] = scaleToStandard(x0, y0, th0, xf, yf, thf, Kmax);
 
@@ -114,6 +114,8 @@
         % Check the correctness of the algorithm
         assert(check(sc_s1, ksigns(pidx,1)*sc_Kmax, sc_s2, ksigns(pidx,2)*sc_Kmax, sc_s3, ksigns(pidx,3)*sc_Kmax, sc_th0, sc_thf));
       end
+      k = ksigns(pidx,:)*sc_Kmax;
+      lengths = [curve.a1.L  curve.a2.L  curve.a3.L];
     end
 
 

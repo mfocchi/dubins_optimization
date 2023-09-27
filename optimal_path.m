@@ -10,12 +10,13 @@ cd(actual_dir);
 
 USEGENCODE = true;
 GENCODE = false;
-
+DEBUG = false;
 
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.3]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [1; 1.0; -1.9];%pf = [10.0; 10.0; -1.9]; % works with UNICYCLE
+%pf = [1; 1.0; -1.9];%pf = [10.0; 10.0; -1.9]; % works with UNICYCLE TODO
+%%does not converge with LONGSLIP
 %pf = [1; -2.0; -1.9];%pf = [10.0; 10.0; -1.9];
 pf = [1.5; 1.0; -1.2];%pf = [10.0; 10.0; -1.9]; % works with LONGSLIP
 
@@ -31,8 +32,8 @@ params.w3= 0; %soft tracking of end target (is already in the constraints not ne
 params.w4= 0; % invariant set TODO
 
 
-%params.model = 'UNICYCLE';
-params.model =  'LONGSLIP';
+params.model = 'UNICYCLE';
+%params.model =  'LONGSLIP';
 %params.model = 'SIDESLIP';
 params.omega_w_max = 2000;
 params.omega_max = 5.5;
@@ -233,6 +234,6 @@ fprintf('duration:  %f\n\n', solution.Tf)
 %s = eval_solution(solution.x, dt,  p0, pf, params) ;
 %plot_solution(s,p0, pf, params, true);
 
-plot_solution(solution,p0, pf, params);
+plot_solution(solution,p0, pf, params, DEBUG);
 
 %save('traj.mat','solution', 'p0','pf');
