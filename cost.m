@@ -22,22 +22,28 @@ function [cost, cost_components]= cost(x, p0,  pf, params)
     p_f = [x(:,end); y(:,end); theta(:,end)];
 
 
-    % be careful there are only N values in this vector the path migh be
-    % underestimated!
-%     deltax = diff(p(1,:));  % diff(X);
-%     deltay = diff(p(2,:));   % diff(Y);
-%     deltaz = diff(p(3,:));    % diff(Z);
-%     path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2));
-
+    xy_der= diff(x)./ diff(y);
+    theta_der = diff(theta);
+    smoothing_xy_der =  sum(xy_der.^2);
+    smoothing_theta_der= sum(theta_der.^2);
+    
     [v_input,omega_input] =  computeVelocitiesFromTracks(omega_l, omega_r, params);
     tracking = norm(p_f - pf);
-    %smoothing = sum(diff(omega_l).^2)+ sum(diff(omega_l).^2);  
-    smoothing = sum(diff(v_input).^2)+ sum(diff(omega_input).^2); 
+    
+    
+    %smooting on wheels (temporal derivative) (not used)
+    %smoothing_wheels = sum(diff(omega_l).^2)+ sum(diff(omega_l).^2);  
+    %smoothing on speed (temporal derivative)
+    smoothing_speed = sum(diff(v_input).^2)+ sum(diff(omega_input).^2);
     
     cost_components = struct;
     cost_components.time   =  params.w1 * Tf;
-    cost_components.smoothing   =  params.w2 *smoothing;
-    cost_components.tracking   =  params.w3 *tracking;
-    
-    cost =  cost_components.time  +   cost_components.smoothing +    cost_components.tracking;
+    cost_components.smoothing_speed   =  params.w2 *smoothing_speed;
+    cost_components.smoothing_xy_der   =  params.w3 *smoothing_xy_der;
+    cost_components.smoothing_theta_der   =  params.w4 *smoothing_theta_der;
+    if params.DEBUG_COST
+        fprintf('cost components: time: %f,  smoothing_speed : %f smoothing_xy_der : %f smoothing_theta_der : %f  \n \n',...
+                        cost_components.time,  cost_components.smoothing_speed,  cost_components.smoothing_xy_der,  cost_components.smoothing_theta_der);
+    end
+    cost =  cost_components.time  +   cost_components.smoothing_speed +  cost_components.smoothing_xy_der+   cost_components.smoothing_theta_der ;
 end

@@ -10,7 +10,7 @@ cd(actual_dir);
 
 USEGENCODE = true;
 GENCODE = false;
-DEBUG = false;
+DEBUG = true;
 
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.3]; 
@@ -27,14 +27,13 @@ params.int_steps = 10 ;%cast(5,"int64"); %0 means normal intergation
 params.num_params = 1; %final time
 
 params.w1= 1;  % minimum time (fundamental!)
-params.w2= 1; % smoothing   1000
-params.w3= 0; %soft tracking of end target (is already in the constraints not needed)
-params.w4= 0; % invariant set TODO
+params.w2= 1; % smoothing on omega, v  
+params.w3= 0; % smoothing on xy_der
+params.w4= 0; %smoothing on theta der 
 
-
-params.model = 'UNICYCLE';
+%params.model = 'UNICYCLE';
 %params.model =  'LONGSLIP';
-%params.model = 'SIDESLIP';
+params.model = 'SIDESLIP';
 params.omega_w_max = 2000;
 params.omega_max = 5.5;
 params.omega_min = -5.5;
@@ -43,6 +42,7 @@ params.v_min = 1;%-2.5;
 params.VELOCITY_LIMITS = true;
 params.t_max = 80;
 params.slack_target = 0.02;
+params.DEBUG_COST = false;
 constr_tolerance = 1e-3;
 dt=0.001; % only to evaluate solution
 
@@ -61,7 +61,7 @@ params.slip_fit_coeff.min_value = -1000;
 % %  
 
 % do init with dubins
-dubConnObj = dubinsConnection
+dubConnObj = dubinsConnection;
 curvature_max = params.omega_max/params.v_max;
 dubConnObj.MinTurningRadius = 1/curvature_max;
 [pathSegObj, pathCosts] = connect(dubConnObj,p0',pf');
@@ -152,7 +152,7 @@ else
     fprintf('path constraints violated:  %i\n\n',num_constr_viol);
 end
 fprintf('cost:  %f\n\n',solution.cost);
-fprintf('cost component: time: %f,  smoothing : %f  \n \n',cost_components.time,  cost_components.smoothing);
+fprintf('cost component: time: %f,  smoothing : %f  \n \n',cost_components.time,  cost_components.smoothing_speed);
 fprintf('target error_real:  %f\n\n',solution.final_error_real)
 fprintf('target error discrete:  %f\n\n', solution.solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution.solution_constr.final_error_discrete)
