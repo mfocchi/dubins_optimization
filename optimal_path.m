@@ -10,16 +10,16 @@ cd(actual_dir);
 
 USEGENCODE = true;
 GENCODE = false;
-DEBUG = true;
+DEBUG = true; %shows local orientation of trajectory and all the plots
 
 % INITIAL STATE (X,Y, THETA)
-p0 = [0.0; 0.0; -0.3]; 
+p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
 %pf = [1; 1.0; -1.9];%pf = [10.0; 10.0; -1.9]; % works with UNICYCLE TODO
 %%does not converge with LONGSLIP
 %pf = [1; -2.0; -1.9];%pf = [10.0; 10.0; -1.9];
-pf = [1.; 1.0; -1.9];%pf = [10.0; 10.0; -1.9]; % works with LONGSLIP
-
+%pf = [1.; 1.0; -1.9];%pf = [10.0; 10.0; -1.9]; % works with LONGSLIP
+pf = [-0.4758; -1.1238; 0.9638];
 
 params.int_method = 'rk4'; %'eul'  'rk4';
 params.N_dyn = 40; %dynamic constraints (number of knowts in the discretization) 
@@ -31,16 +31,16 @@ params.w2= 1; % smoothing on omega, v
 params.w3= 0; % smoothing on xy_der
 params.w4= 0; %smoothing on theta der 
 
-%params.model = 'UNICYCLE';
+params.model = 'UNICYCLE';
 %params.model =  'LONGSLIP';
-params.model = 'SIDESLIP';
-params.omega_w_max = 2000;
-params.omega_max = 5.5;
-params.omega_min = -5.5;
-params.v_max = 1;
-params.v_min = 1;%-2.5;
+%params.model = 'SIDESLIP';
+params.omega_w_max = 1000;
+params.omega_max = 1.;
+params.omega_min = -1.;
+params.v_max = 0.1;
+params.v_min = 0.1;%-2.5;
 params.VELOCITY_LIMITS = true;
-params.t_max = 80;
+params.t_max = 80; %TODO put a check on this
 params.slack_target = 0.02;
 params.DEBUG_COST = false;
 constr_tolerance = 1e-3;
@@ -54,24 +54,24 @@ params.slip_fit_coeff.right = [0.0390,    0.2499 ];
 params.side_slip_fit_coeff = [-0.7758   -6.5765];
 params.slip_fit_coeff.min_value = -1000;
 
-% normal init  (no longer used)
-% t0 = norm(pf(1:2) - p0(1:2))/(0.5*params.v_max); 
-% omega_l0 = 0.5*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
-% omega_r0 = 0.5*params.omega_w_max*ones(1,params.N_dyn);
-% %  
-
 % do init with dubins
 dubConnObj = dubinsConnection;
 curvature_max = params.omega_max/params.v_max;
 dubConnObj.MinTurningRadius = 1/curvature_max;
 [pathSegObj, pathCosts] = connect(dubConnObj,p0',pf');
-show(pathSegObj{1})
+%show(pathSegObj{1})
 % get total time
 t0 = sum(pathSegObj{1}.MotionLengths)/params.v_max;
 % compute the omega from dubin
 omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
 %map to wheel omega
 [omega_l0, omega_r0, t_rough] = getVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
+
+% normal init  (no longer used)
+%t0 = norm(pf(1:2) - p0(1:2))/(0.5*params.v_max); 
+% omega_l0 = 0.*params.omega_w_max*ones(1,params.N_dyn); %TODO gives issue with 0, should be initialized with half
+% omega_r0 = 0.*params.omega_w_max*ones(1,params.N_dyn);
+% 
 
 if GENCODE
     %generates the cpp code
@@ -140,7 +140,7 @@ end
 fprintf(2,"number of iterations: %i\n", solution.optim_output.iterations);
 fprintf(2,"number of func evaluations: %i\n", solution.optim_output.funcCount);
 
-[cost, cost_components] = cost(solution.x, p0,  pf, params);
+[final_cost, cost_components] = cost(solution.x, p0,  pf, params);
 fprintf('target constraint violated:  %f\n\n',solution.c(1));
 constr_viol = solution.c(2:end)>constr_tolerance;
 num_constr_viol = sum(constr_viol);
@@ -151,7 +151,7 @@ if num_constr_viol>0
 else
     fprintf('path constraints violated:  %i\n\n',num_constr_viol);
 end
-fprintf('cost:  %f\n\n',solution.cost);
+fprintf('cost:  %f\n\n',final_cost);
 fprintf('cost component: time: %f,  smoothing : %f  \n \n',cost_components.time,  cost_components.smoothing_speed);
 fprintf('target error_real:  %f\n\n',solution.final_error_real)
 fprintf('target error discrete:  %f\n\n', solution.solution_constr.final_error_discrete)

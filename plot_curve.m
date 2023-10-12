@@ -16,24 +16,28 @@ set(gca,'YLim',[min_y max_y])
 
 color_input = 'r'; 
 
-% actual traj
-plot(solution.p_fine(1,:), solution.p_fine(2,:), 'Color', color_input ) ;
-
-% discrete traj
-plot(solution.p(1,:), solution.p(2,:), 'o', 'Color', color_input ) ;
-
 scaling = 0.1*norm(pf(1:2) - p0(1:2));
 %initial orient
 plotOrientation([p0(1); p0(2)], p0(3), scaling);
 %final orient 
 plotOrientation([pf(1); pf(2)], pf(3), 0.1);
-grid on;
 
 if DEBUG
     for i =1:length(solution.p)
         plotOrientation([solution.p(1,i); solution.p(2,i)], solution.p(3,i), scaling);
     end
 end
+
+
+% actual traj
+plot(solution.p_fine(1,:), solution.p_fine(2,:), 'Color', color_input ) ;
+
+% discrete traj
+plot(solution.p(1,:), solution.p(2,:), 'o', 'Color', color_input ) ;
+
+
+grid on;
+
 
 
 xlabel('X');

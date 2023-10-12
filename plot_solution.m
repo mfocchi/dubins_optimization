@@ -79,13 +79,15 @@ if (DEBUG)
     end
     
 end
-figure
+
+figure;
 plot_curve( solution, p0(:), pf(:), DEBUG);
+shg
 
-
+curvature_max = params.omega_max/params.v_max;
 dubinsObj= dubinsClass;
-% Find optimal Dubins solution
-[pidx, curve] = dubinsObj.dubins_shortest_path(p0(1), p0(2), p0(3), pf(1), pf(2), pf(3), params.omega_max);
+%Find optimal Dubins solution
+[pidx, curve] = dubinsObj.dubins_shortest_path(p0(1), p0(2), p0(3), pf(1), pf(2), pf(3), curvature_max);
 %plot dubin
 dubinsObj.plotdubins(curve, true, [1 0 0], [0 0 0], [1 0 0])
 % dubinsObj.plotarc(curve.a1, [1 0 0]);
