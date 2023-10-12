@@ -37,11 +37,35 @@ function [cost, cost_components]= cost(x, p0,  pf, params)
     smoothing_speed = sum(diff(v_input).^2)+ sum(diff(omega_input).^2);
     
     cost_components = struct;
-    cost_components.time   =  params.w1 * Tf;
-    cost_components.smoothing_speed   =  params.w2 *smoothing_speed;
-    cost_components.smoothing_xy_der   =  params.w3 *smoothing_xy_der;
-    cost_components.smoothing_theta_der   =  params.w4 *smoothing_theta_der;
+    %to avoid nan issue incorporate them in the cost only if the weight is
+    %not zero!
+    if  params.w1 ~=0 
+        cost_components.time   =  params.w1 * Tf;
+    else 
+        cost_components.time   = 0;
+    end
+
+    if  params.w2 ~=0     
+        cost_components.smoothing_speed   =  params.w2 *smoothing_speed;
+    else 
+        cost_components.smoothing_speed   = 0;
+    end
+
+    if params.w3~=0
+        cost_components.smoothing_xy_der   =  params.w3 *smoothing_xy_der;
+    else 
+        cost_components.smoothing_xy_der   = 0;
+    end
+
+    if params.w4~=0
+        cost_components.smoothing_theta_der   =  params.w4 *smoothing_theta_der;
+    else
+        cost_components.smoothing_theta_der   = 0;
+    end
+    
+        
     if params.DEBUG_COST
+
         fprintf('cost components: time: %f,  smoothing_speed : %f smoothing_xy_der : %f smoothing_theta_der : %f  \n \n',...
                         cost_components.time,  cost_components.smoothing_speed,  cost_components.smoothing_xy_der,  cost_components.smoothing_theta_der);
     end
