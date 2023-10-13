@@ -48,7 +48,7 @@ if (DEBUG)
     
     
     
-    if params.model~='UNICYCLE'
+    if strcmp(params.model,'UNICYCLE')
         
         [R, i_L, i_R] = evalSlippage(solution.p(3,:), solution.omega_l, solution.omega_r, params);          
         
