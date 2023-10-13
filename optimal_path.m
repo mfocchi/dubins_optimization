@@ -7,7 +7,7 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
-
+SAVE_TRAJ = true;
 USEGENCODE = true;
 GENCODE = false;
 DEBUG = true; %shows local orientation of trajectory and all the plots
@@ -169,3 +169,26 @@ fprintf('duration:  %f\n\n', solution.Tf)
 
 plot_solution(solution,p0, pf, params, DEBUG);
 
+%% Save data for testing on robot
+% generate a velocity profile by interpolation. User must select a desired
+% step size to define the resolution. In case of integration with ROS, it
+% should correspond to the control execution period.
+
+if(SAVE_TRAJ)
+    dt = 0.002; % [s]
+    filename = 'optimal_traj_2_fine_13_10.csv';
+    opts.Interpreter = 'none';
+    opts.Default = 'Cancel';
+    answer = questdlg(strcat('Do you want to save a velocity trajectory as "', filename, '" ?'), ...
+	    'Save', ...
+	    'Yes','Cancel', opts);
+    % Handle response
+    switch answer
+        case 'Yes'
+            disp("Save table as '" + filename + "'");
+            doretta_path = extractUnicycleSetpoint(solution, dt);
+            writetable(doretta_path, filename);
+        case 'Cancel'
+            disp("Table was not saved");
+    end
+end
