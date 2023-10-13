@@ -31,14 +31,17 @@ params.w2= 1; % smoothing on omega, v
 params.w3= 0; % smoothing on xy_der
 params.w4= 0; %smoothing on theta der 
 
-params.model = 'UNICYCLE';
+tau_gearbox = 34.45;
+%params.model = 'UNICYCLE';
 %params.model =  'LONGSLIP';
-%params.model = 'SIDESLIP';
-params.omega_w_max = 1000;
-params.omega_max = 1.;
-params.omega_min = -1.;
+%params.model = 'LONGSLIP_SIDESLIP';
+params.model = 'LONGSLIP_SIDESLIP_LOCKED_WHEEL';
+% max rpm for the motor = 1500, selecting some value below
+params.omega_w_max = convangvel(1200,'rpm','rad/s') / tau_gearbox; 
+params.omega_max = 5.;
+params.omega_min = -5.;
 params.v_max = 0.1;
-params.v_min = 0.1;%-2.5;
+params.v_min = 0.1;
 params.VELOCITY_LIMITS = true;
 params.t_max = 80; %TODO put a check on this
 params.slack_target = 0.02;
@@ -47,12 +50,13 @@ constr_tolerance = 1e-3;
 dt=0.001; % only to evaluate solution
 
 params.width = 0.606; % [m]
-params.sprocket_radius = 0.0979; % [m]
-params.gearbox_ratio = 39.4;
+params.sprocket_radius = 0.0856; % [m]
+params.gearbox_ratio = 1; % doesn't have to affect the optimization
 params.slip_fit_coeff.left  = [-0.0591,   -0.2988];
 params.slip_fit_coeff.right = [0.0390,    0.2499 ];
-params.side_slip_fit_coeff = [-0.7758   -6.5765];
-params.slip_fit_coeff.min_value = -1000;
+params.side_slip_fit_coeff = [-0.4993   -3.7898];
+params.slip_fit_coeff.min_value = -10;
+params.locked_wheel_coeff = [0.0    0.04]; % fitting of wheel velocity when set to 0.0 [m/s .]
 
 % do init with dubins
 dubConnObj = dubinsConnection;
@@ -165,4 +169,3 @@ fprintf('duration:  %f\n\n', solution.Tf)
 
 plot_solution(solution,p0, pf, params, DEBUG);
 
-%save('traj.mat','solution', 'p0','pf');
