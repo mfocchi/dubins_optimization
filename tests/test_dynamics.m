@@ -4,7 +4,7 @@ clear all
 
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
-
+addpath("../");
 params.int_method = 'rk4';
 params.int_steps = 5;
 N_dyn = 100;
@@ -29,7 +29,7 @@ params.sprocket_radius = 0.0979; % [m]
 params.gearbox_ratio = 39.4;
 params.slip_fit_coeff.left  = [-0.0591   -0.2988];
 params.slip_fit_coeff.right = [0.0390    0.2499 ];
-
+params.model = 'UNICYCLE';
 
 [~,~,x, t] = integrate_dynamics(x0, 0, dt, n_sim_steps, omega_l, omega_r, params);
 

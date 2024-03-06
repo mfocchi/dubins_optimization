@@ -1,7 +1,7 @@
 % Reset environment
 close all; clear all; clc;
 
-% Define problem data
+addpath("../");
 x0 = 0; 
 y0 = 0; 
 th0 = -2/3*pi;

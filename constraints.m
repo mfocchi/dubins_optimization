@@ -1,3 +1,4 @@
+
 function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
 
     Tf =  x(1);

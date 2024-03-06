@@ -1,4 +1,7 @@
 clear all; close all ;
+
+addpath("../");
+
 p0 = [0.0 0.0 -0.3]; 
 pf = [1.5 1.0 -1.2];
 
