@@ -1,13 +1,16 @@
-function resp = OptimCallback(~,req,resp)
-global params
+function resp = OptimCallback(req,resp)
+global params  
 
-p0(1) = req.P0.X;
-p0(2) = req.P0.Y;
-p0(3) = req.P0.Z;
+p0(1) = req.x0;
+p0(2) = req.y0;
+p0(3) = req.theta0;
 
-pf(1) = req.Pf.X;
-pf(2) = req.Pf.Y;
-pf(3) = req.Pf.Z;
+pf(1) = req.xf;
+pf(2) = req.yf;
+pf(3) = req.thetaf;
+%make them columns
+p0 = p0(:);
+pf = pf(:);
 
 dubConnObj = dubinsConnection;
 curvature_max = params.omega_max/params.v_max;
@@ -22,8 +25,13 @@ omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
 [omega_l0, omega_r0, t_rough] = getVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
 
 solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
-resp.LinVel.Data = solution.v(1);
-resp.AngVel.Data = solution.omega(1);
- 
+
+solution.p
+
+resp.des_x = solution.p(1,:);
+resp.des_y = solution.p(2,:);
+resp.des_theta = solution.p(3,:);
+% 
+
 
 end
