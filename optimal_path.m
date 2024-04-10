@@ -108,21 +108,21 @@ plot_solution(solution,p0, pf, params, DEBUG);
 % step size to define the resolution. In case of integration with ROS, it
 % should correspond to the control execution period.
 
-if(SAVE_TRAJ)
-    dt = 0.002; % [s]
-    filename = 'optimal_traj_2_fine_13_10.csv';
-    opts.Interpreter = 'none';
-    opts.Default = 'Cancel';
-    answer = questdlg(strcat('Do you want to save a velocity trajectory as "', filename, '" ?'), ...
-	    'Save', ...
-	    'Yes','Cancel', opts);
-    % Handle response
-    switch answer
-        case 'Yes'
-            disp("Save table as '" + filename + "'");
-            doretta_path = extractUnicycleSetpoint(solution, dt);
-            writetable(doretta_path, filename);
-        case 'Cancel'
-            disp("Table was not saved");
-    end
-end
+% if(SAVE_TRAJ)
+%     dt = 0.002; % [s]
+%     filename = 'optimal_traj_2_fine_13_10.csv';
+%     opts.Interpreter = 'none';
+%     opts.Default = 'Cancel';
+%     answer = questdlg(strcat('Do you want to save a velocity trajectory as "', filename, '" ?'), ...
+% 	    'Save', ...
+% 	    'Yes','Cancel', opts);
+%     % Handle response
+%     switch answer
+%         case 'Yes'
+%             disp("Save table as '" + filename + "'");
+%             doretta_path = extractUnicycleSetpoint(solution, dt);
+%             writetable(doretta_path, filename);
+%         case 'Cancel'
+%             disp("Table was not saved");
+%     end
+% end
