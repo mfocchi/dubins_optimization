@@ -1,12 +1,9 @@
 function [R, i_L, i_R] = evalSlippage(theta, omega_l, omega_r, params)
-        omega_wheel_l = omega_l / params.gearbox_ratio; % [rad/s]
-        omega_wheel_r = omega_r / params.gearbox_ratio; % [rad/s]
-   
         r = params.sprocket_radius;
         B = params.width;
 
-        v_input = r * (omega_wheel_r + omega_wheel_l) / 2.0;
-        omega_input = r * (omega_wheel_r - omega_wheel_l) / B;
+        v_input = r * (omega_r + omega_l) / 2.0;
+        omega_input = r * (omega_r - omega_l) / B;
         turning_radius_input = v_input ./ omega_input;
         a0_L = params.slip_fit_coeff.left(1);
         a1_L = params.slip_fit_coeff.left(2);
@@ -15,6 +12,8 @@ function [R, i_L, i_R] = evalSlippage(theta, omega_l, omega_r, params)
         a1_R = params.slip_fit_coeff.right(2);
 
         R = abs(turning_radius_input);
+
+        %TODO eval slippage
         for i=1:length(turning_radius_input)
             if(turning_radius_input(i) > 0.0) % turning left
                 i_L(i) = a0_L / (R(i) + a1_L);
