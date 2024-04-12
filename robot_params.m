@@ -14,21 +14,24 @@ tau_gearbox = 34.45;
 params.model = 'LONGSIDE';
 % max rpm for the motor = 1500, selecting some value below
 RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 1200 *RPM2RADS/ tau_gearbox; 
-params.omega_max = 5.;
-params.omega_min = -5.;
-params.v_max = 0.1;
-params.v_min = 0.1;
+params.omega_w_max = 1500 *RPM2RADS/ tau_gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s
+                                                  % these correspond to
+                                                  % v_max = 0.42 and
+                                                  % omega_max =1.4
+                                               
+params.omega_max = 1.;
+params.omega_min = -1.;
+params.v_max = 0.2;
+params.v_min = 0.;
 params.VELOCITY_LIMITS = true;
 params.t_max = 80; %TODO put a check on this
 params.slack_target = 0.02;
 params.DEBUG_COST = false;
 constr_tolerance = 1e-3;
-dt=0.001; % only to evaluate solution
+params.dt=0.001; % only to evaluate solution
 
 params.width = 0.606; % [m]
 params.sprocket_radius = 0.0856; % [m]
-params.gearbox_ratio = 1; % doesn't have to affect the optimization
 params.slip_fit_coeff.left  = [-0.0591,   -0.2988];
 params.slip_fit_coeff.right = [0.0390,    0.2499 ];
 params.side_slip_fit_coeff = [-0.4993   -3.7898];
