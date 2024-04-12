@@ -29,11 +29,11 @@ if DEBUG
 end
 
 
-% actual traj
-plot(solution.p_fine(1,:), solution.p_fine(2,:), 'Color', color_input ) ;
 
 % discrete traj
 plot(solution.p(1,:), solution.p(2,:), 'o', 'Color', color_input ) ;
+% actual traj (fine)
+plot(solution.p_fine(1,:), solution.p_fine(2,:), 'Color', 'b' ) ;
 
 
 grid on;

@@ -1,6 +1,6 @@
 function resp = OptimCallback(req,resp)
     global params  
-    
+    clc
     p0(1) = req.x0;
     p0(2) = req.y0;
     p0(3) = req.theta0;
@@ -28,17 +28,42 @@ function resp = OptimCallback(req,resp)
     [omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
     
     if strcmp(req.plan_type, "dubins")
+        %generate inputs from dubins om a fome grid (dt)
+        [omega_l_fine, omega_r_fine, ] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas, params.dt);
+        %integrate dubin on a fine grid (dt)
+        params.int_steps = 0;
+        params.model = 'UNICYCLE'; %need to set unicycle!!!
+        %integrate the fine grid omegas
+        [states, t] = computeRollout(p0, 0,params.dt, length(omega_l_fine), omega_l_fine, omega_r_fine, params);
+        resp.des_x = states(1,:);
+        resp.des_y = states(2,:);
+        resp.des_theta = states(3,:);
+        [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params)
+        resp.des_v = v_input;
+        resp.des_omega = omega_input;
+        resp.dt = params.dt;
+        
 
-    elseif strcmp(req.plan_type, "optim")
-    
+    elseif strcmp(req.plan_type, "optim")    
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
         plot_solution(solution,p0, pf, params, false);
-        resp.des_x = solution.p(1,:);
-        resp.des_y = solution.p(2,:);
-        resp.des_theta = solution.p(3,:);
+        resp.des_x = solution.p_fine(1,:);
+        resp.des_y = solution.p_fine(2,:);
+        resp.des_theta = solution.p_fine(3,:);
+        resp.des_v = solution.v_input_fine;
+        resp.des_omega = solution.omega_input_fine;
+        resp.dt = params.dt;
+
+
     else
         disp("wrong plan type")
     end
     %
-
+    req.plan_type
+    resp.des_x(end-10:end)
+    resp.des_y(end-10:end)
+    resp.des_theta(end-10:end)
+    resp.des_v(end-10:end)
+    resp.des_omega(end-10:end)
+    resp.dt
 end

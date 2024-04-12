@@ -86,6 +86,10 @@ function solution = eval_solution(x,  dt, p0, pf, params)
   
     solution.v_input = v_input;
     solution.omega_input = omega_input;
+
+    [v_input_fine,omega_input_fine] =  computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params);
+    solution.v_input_fine = v_input_fine;
+    solution.omega_input_fine = omega_input_fine;
  
 
 

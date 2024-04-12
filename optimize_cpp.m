@@ -3,9 +3,7 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     %make it column vector
     p0 = p0(:);
     pf = pf(:);
-    %for eval solution
-    dt = 0.001; 
-    
+       
     % needs to be fixed for code generation
     constr_tolerance = 1e-3;
 
@@ -26,7 +24,7 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
 
     
 
-    solution = eval_solution(x, dt,  p0, pf, params) ;
+    solution = eval_solution(x, params.dt,  p0, pf, params) ;
     solution.x = x;
     solution.cost = final_cost;
     solution.problem_solved = EXITFLAG ;%(EXITFLAG == 1) || (EXITFLAG == 2);
