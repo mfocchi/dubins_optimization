@@ -1,9 +1,12 @@
-function [omega_l0, omega_r0, time] = getVelocityParamsFromDubin(params, lengths, omegas) 
+function [omega_l0, omega_r0, time] = getWheelVelocityParamsFromDubin(params, lengths, omegas, dt) 
      % get total time 
     t0 = sum(lengths)/params.v_max; 
 
     switch_times = [cumsum(lengths) / params.v_max];
-    dt = t0 / (params.N_dyn );
+    % if not specified compute dt
+    if nargin<4
+        dt = t0 / (params.N_dyn );
+    end
 
     % build  vector
     omega0 = [];

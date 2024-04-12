@@ -26,10 +26,11 @@ dubConnObj.MinTurningRadius = 1/curvature_max;
 %show(pathSegObj{1})
 % get total time
 t0 = sum(pathSegObj{1}.MotionLengths)/params.v_max;
-% compute the omega from dubin
+% compute the 3 omegas from dubin (I need to use matlab because of this
+% function)
 omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
 %map to wheel omega
-[omega_l0, omega_r0, t_rough] = getVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
+[omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
 
 % normal init  (no longer used)
 % t0 = norm(pf(1:2) - p0(1:2))/(0.5*params.v_max); 

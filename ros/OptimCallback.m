@@ -25,7 +25,7 @@ function resp = OptimCallback(req,resp)
     % compute the omega from dubin
     omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
     %map to wheel omega
-    [omega_l0, omega_r0, t_rough] = getVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
+    [omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
     
     if strcmp(req.plan_type, "dubins")
 
