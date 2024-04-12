@@ -10,9 +10,8 @@ params.w4= 0; %smoothing on theta der
 
 tau_gearbox = 34.45;
 %params.model = 'UNICYCLE';
-%params.model =  'LONGSLIP';
-params.model = 'LONGSLIP_SIDESLIP';
-%params.model = 'LONGSLIP_SIDESLIP_LOCKED_WHEEL';
+%params.model = 'LONGONLY';
+params.model = 'LONGSIDE';
 % max rpm for the motor = 1500, selecting some value below
 RPM2RADS = 1/60*2*pi;
 params.omega_w_max = 1200 *RPM2RADS/ tau_gearbox; 
