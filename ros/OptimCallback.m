@@ -39,20 +39,37 @@ function resp = OptimCallback(req,resp)
         resp.des_y = states(2,:);
         resp.des_theta = states(3,:);
         [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params)
+        show(pathSegObj{1})
+
+
+
         resp.des_v = v_input;
         resp.des_omega = omega_input;
         resp.dt = params.dt;
+
+
         
 
     elseif strcmp(req.plan_type, "optim")    
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
         plot_solution(solution,p0, pf, params, false);
-        resp.des_x = solution.p_fine(1,:);
-        resp.des_y = solution.p_fine(2,:);
-        resp.des_theta = solution.p_fine(3,:);
-        resp.des_v = solution.v_input_fine;
-        resp.des_omega = solution.omega_input_fine;
+        %these vectors are too big to transfer to the robot TODO if you fix
+        %C++  side then send these otherwise you can have integration
+        %errors
+        % resp.des_x = solution.p_fine(1,:);
+        % resp.des_y = solution.p_fine(2,:);
+        % resp.des_theta = solution.p_fine(3,:);
+        % resp.des_v = solution.v_input_fine;
+        % resp.des_omega = solution.omega_input_fine;
+
+        resp.des_x = solution.p(1,:);
+        resp.des_y = solution.p(2,:);
+        resp.des_theta = solution.p(3,:);
+        resp.des_v = solution.v_input;
+        resp.des_omega = solution.omega_input;
         resp.dt = params.dt;
+        solution.Tf
+        length(resp.des_theta)
 
 
     else

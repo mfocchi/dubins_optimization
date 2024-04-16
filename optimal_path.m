@@ -12,9 +12,9 @@ USEGENCODE = true;
 DEBUG = true; %shows local orientation of trajectory and all the plots
 
 % INITIAL STATE (X,Y, THETA)
-p0 = [0.0; 0.0; -0.4];
+p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
-pf = [-0.4758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
+pf = [-0.2758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
 run('robot_params.m');
 
 % % do init with dubins
