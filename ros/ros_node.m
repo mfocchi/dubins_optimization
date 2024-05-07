@@ -7,14 +7,15 @@ addpath("../");
 
 %https://it.mathworks.com/help/ros/ug/call-and-provide-ros2-services.html
 homedir = getenv('HOME');
-custom_message_folder = strcat(homedir,'/ros2_docker/ros2_ws/src/lyapunov_slippage_controller/');
-addpath(custom_message_folder)
+
+%custom_message_folder = strcat(homedir,'/ros2_docker/ros2_ws/src/lyapunov_slippage_controller/');
+%addpath(custom_message_folder)
 
 % do only once
-%cd(custom_message_folder) % you need to move to the parent folder that
-%contains the package with the srv folder
-% rm matlab_msg_gen % removes the previous folder
-%ros2genmsg % this creates the new  matlab_msg_gen folder inside  lyapunov_slippage_controller, (CreateShareableFile= true ) creates the zip
+% cd('../') % you need to move to the parent folder that
+% contains the optim_interfaces package with the srv folder
+% rmdir('matlab_msg_gen','s') % removes the previous folder
+% ros2genmsg % this creates the new  matlab_msg_gen folder inside  lyapunov_slippage_controller, (CreateShareableFile= true ) creates the zip
 % clear classes
 % rehash toolboxcache
 
