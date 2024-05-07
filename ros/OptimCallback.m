@@ -56,17 +56,17 @@ function resp = OptimCallback(req,resp)
         %these vectors are too big to transfer to the robot TODO if you fix
         %C++  side then send these otherwise you can have integration
         %errors
-        % resp.des_x = solution.p_fine(1,:);
-        % resp.des_y = solution.p_fine(2,:);
-        % resp.des_theta = solution.p_fine(3,:);
-        % resp.des_v = solution.v_input_fine;
-        % resp.des_omega = solution.omega_input_fine;
+         resp.des_x = solution.p_fine(1,:);
+         resp.des_y = solution.p_fine(2,:);
+         resp.des_theta = solution.p_fine(3,:);
+         resp.des_v = solution.v_input_fine;
+         resp.des_omega = solution.omega_input_fine;
 
-        resp.des_x = solution.p(1,:);
-        resp.des_y = solution.p(2,:);
-        resp.des_theta = solution.p(3,:);
-        resp.des_v = solution.v_input;
-        resp.des_omega = solution.omega_input;
+        % resp.des_x = solution.p(1,:);
+        % resp.des_y = solution.p(2,:);
+        % resp.des_theta = solution.p(3,:);
+        % resp.des_v = solution.v_input;
+        % resp.des_omega = solution.omega_input;
         resp.dt = params.dt;
         solution.Tf
         length(resp.des_theta)

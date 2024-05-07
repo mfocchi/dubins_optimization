@@ -6,15 +6,18 @@ global params
 addpath("../");
 
 %https://it.mathworks.com/help/ros/ug/call-and-provide-ros2-services.html
+homedir = getenv('HOME');
+custom_message_folder = strcat(homedir,'/ros2_docker/ros2_ws/src/lyapunov_slippage_controller/');
+addpath(custom_message_folder)
 
 % do only once
-% cd('/home/laboratorio/ros2_docker/ros2_ws/src/') 
-% ros2genmsg % this creates the zip (CreateShareableFile=true)
+%cd(custom_message_folder) % you need to move to the parent folder that
+%contains the package with the srv folder
+% rm matlab_msg_gen % removes the previous folder
+%ros2genmsg % this creates the new  matlab_msg_gen folder inside  lyapunov_slippage_controller, (CreateShareableFile= true ) creates the zip
 % clear classes
 % rehash toolboxcache
 
-
-addpath('/home/laboratorio/ros2_docker/ros2_ws/src/matlab_msg_gen/')
 node_1 = ros2node("optim_server");
 node_2 = ros2node("optim_client");
 
@@ -88,6 +91,7 @@ if ~status
     fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
 end
 
+disp(length(resp.des_x))
 % resp.des_x'
 % resp.des_y'
 % resp.des_theta'
