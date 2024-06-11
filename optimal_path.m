@@ -14,7 +14,9 @@ DEBUG = true; %shows local orientation of trajectory and all the plots
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
-pf = [-0.2758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
+
+pf = [0.5; -1.1238; 0.3638];
+%pf = [-0.2758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
 run('robot_params.m');
 
 % % do init with dubins
@@ -53,9 +55,10 @@ end
 mpc_fun_handler = str2func(mpc_fun);
 
 solution = mpc_fun_handler(p0,  pf, omega_l0, omega_r0, t0,  params); 
-solution.problem_solved
-solution.Tf
-solution.achieved_target
+
+fprintf(2,"Time duration: %f \n", solution.Tf)
+fprintf(2,"Achieved target: %f %f %f \n", solution.achieved_target)
+
 
 % 
 % 1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
@@ -74,6 +77,7 @@ switch solution.problem_solved
     case 0 
         fprintf(2,"Max number of feval exceeded (10000)\n")
 end
+
 
 fprintf(2,"number of iterations: %i\n", solution.optim_output.iterations);
 fprintf(2,"number of func evaluations: %i\n", solution.optim_output.funcCount);
@@ -96,10 +100,6 @@ fprintf('target error discrete:  %f\n\n', solution.solution_constr.final_error_d
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution.solution_constr.final_error_discrete)
 fprintf('duration:  %f\n\n', solution.Tf)
 
-
-% for debug
-%s = eval_solution(solution.x, dt,  p0, pf, params) ;
-%plot_solution(s,p0, pf, params, true);
 
 plot_solution(solution,p0, pf, params, DEBUG);
 

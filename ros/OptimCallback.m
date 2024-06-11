@@ -38,18 +38,13 @@ function resp = OptimCallback(req,resp)
         resp.des_x = states(1,:);
         resp.des_y = states(2,:);
         resp.des_theta = states(3,:);
-        [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params)
-        show(pathSegObj{1})
-
-
-
+        [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params);
         resp.des_v = v_input;
         resp.des_omega = omega_input;
         resp.dt = params.dt;
 
 
         
-
     elseif strcmp(req.plan_type, "optim")    
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
         plot_solution(solution,p0, pf, params, false);
@@ -68,19 +63,22 @@ function resp = OptimCallback(req,resp)
         % resp.des_v = solution.v_input;
         % resp.des_omega = solution.omega_input;
         resp.dt = params.dt;
+        %solution.Tf
+        %length(resp.des_theta)
+
         solution.Tf
-        length(resp.des_theta)
+        solution.achieved_target
 
 
     else
         disp("wrong plan type")
     end
     %
-    req.plan_type
-    resp.des_x(end-10:end)
-    resp.des_y(end-10:end)
-    resp.des_theta(end-10:end)
-    resp.des_v(end-10:end)
-    resp.des_omega(end-10:end)
-    resp.dt
+    % req.plan_type
+    % resp.des_x(end-10:end)
+    % resp.des_y(end-10:end)
+    % resp.des_theta(end-10:end)
+    % resp.des_v(end-10:end)
+    % resp.des_omega(end-10:end)
+    % resp.dt
 end

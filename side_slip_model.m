@@ -7,27 +7,24 @@ function dxdt = side_slip_model(x, omega_l, omega_r, params)
     %     % ideal linear and angular velocity
     v_input = r * (omega_r + omega_l) / 2.0;
     omega_input = r * (omega_r - omega_l) / B;
-    
-    a0 = params.side_slip_fit_coeff(1);
-    a1 = params.side_slip_fit_coeff(2);
 
-    turning_radius_input = v_input / omega_input;
-    R = abs(turning_radius_input);
-
-    side_slip = a0 * exp(R * a1);
+    if omega_input == 0 &&  v_input~=0
+        turning_radius_input =  1e08*sign(v_input);
+    elseif omega_input == 0 &&  v_input==0
         
-    if(turning_radius_input > 0.0) % turning left 
-        alpha = side_slip;
-    else % turning right
-        % inverting the slips with respect to test results   
-        alpha = -side_slip;
+        turning_radius_input = 1e8;
+    else
+         turning_radius_input = v_input / omega_input;
     end
     
-    %%TODO ADD LONG SLIP
-    % actual linear and angular velocity
-    % v     = (v_wheel_r + v_wheel_l) / 2;
-    % Omega = (v_wheel_r - v_wheel_l) / B;
-    
+    % side slip        
+    if(turning_radius_input > 0.0) % turning left 
+        alpha = params.side_slip_angle_coefficients_left(1)*exp(params.side_slip_angle_coefficients_left(2)*turning_radius_input);
+    else % turning right
+        % inverting the slips with respect to test results   
+        alpha = params.side_slip_angle_coefficients_right(1)*exp(params.side_slip_angle_coefficients_right(2)*turning_radius_input);
+    end
+       
     dxdt = [v_input*(cos(theta)-sin(theta)*tan(alpha)); v_input*(sin(theta)+cos(theta)*tan(alpha)); omega_input];
 end
 

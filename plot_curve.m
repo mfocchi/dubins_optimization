@@ -14,8 +14,6 @@ max_y = max(max(solution.p(2,:)), pf(2)) +3 ;
 set(gca,'XLim',[min_x max_x])
 set(gca,'YLim',[min_y max_y])
 
-color_input = 'r'; 
-
 scaling = 0.1*norm(pf(1:2) - p0(1:2));
 %initial orient
 plotOrientation([p0(1); p0(2)], p0(3), scaling);
@@ -28,18 +26,11 @@ if DEBUG
     end
 end
 
-
-
 % discrete traj
-plot(solution.p(1,:), solution.p(2,:), 'o', 'Color', color_input ) ;
+plot(solution.p(1,:), solution.p(2,:), 'o', 'Color', 'r' ) ;
 % actual traj (fine)
 plot(solution.p_fine(1,:), solution.p_fine(2,:), 'Color', 'b' ) ;
-
-
 grid on;
-
-
-
 xlabel('X');
 ylabel('Y');
 

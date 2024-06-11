@@ -19,49 +19,22 @@ homedir = getenv('HOME');
 % clear classes
 % rehash toolboxcache
 
+
 node_1 = ros2node("optim_server");
 node_2 = ros2node("optim_client");
 
 %THESE ARE THE SETTINGS THE ROBOT WILL USE!
-params.int_method = 'rk4'; %'eul'  'rk4';
-params.N_dyn = 40; %dynamic constraints (number of knowts in the discretization) 
-params.int_steps = 10 ;%cast(5,"int64"); %0 means normal intergation
-params.num_params = 1; %final time
+run('robot_params.m');
 
-params.w1= 1;  % minimum time (fundamental!)
-params.w2= 1; % smoothing on omega, v  
-params.w3= 0; % smoothing on xy_der
-params.w4= 0; %smoothing on theta der 
+params.dt=0.01; % in matlab is used only to evaluate solution, but it will be sent to c++ to define the discretization for the path generation
 
-tau_gearbox = 34.45;
-%params.model = 'UNICYCLE';
-params.model = 'SIDEONLY';
-%params.model = 'LONGSIDE';
-% max rpm for the motor = 1500, selecting some value below
-RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 1500 *RPM2RADS/ tau_gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s
-                                                  % these correspond to
-                                                  % v_max = 0.42 and
-                                                  % omega_max =1.4
-                                               
-params.omega_max = 1.5;
-params.omega_min = -1.5;
-params.v_max = 0.5;
-params.v_min = 0.1;
-params.VELOCITY_LIMITS = true;
-params.t_max = 80; %TODO put a check on this
-params.slack_target = 0.02;
-params.DEBUG_COST = false;
-constr_tolerance = 1e-3;
-params.dt=0.01; % only to evaluate solution it will be used in the path generation
-
-params.width = 0.606; % [m]
-params.sprocket_radius = 0.0856; % [m]
-params.slip_fit_coeff.left  = [-0.0591,   -0.2988];
-params.slip_fit_coeff.right = [0.0390,    0.2499 ];
-params.side_slip_fit_coeff = [-0.7758   -6.5765];
-params.slip_fit_coeff.min_value = -1000;
-params.locked_wheel_coeff = [0 1]
+if ~isfile('../optimize_cpp_mex.mexa64')
+    disp('Generating C++ code');
+    cfg = coder.config('mex');
+    cfg.IntegrityChecks = false;
+    cfg.SaturateOnIntegerOverflow = false;
+    codegen -config cfg  optimize_cpp -args {zeros(3,1), zeros(3,1),coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]),0, coder.cstructname(params, 'param') } -nargout 1 -report
+end
 
 
 server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
@@ -92,10 +65,10 @@ if ~status
     fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
 end
 
-disp(length(resp.des_x))
+%disp(length(resp.des_x))
 % resp.des_x'
 % resp.des_y'
 % resp.des_theta'
 % resp.des_v'
 % resp.des_omega'
-% resp.dt
+%resp.dt
