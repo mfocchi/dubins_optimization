@@ -28,7 +28,7 @@ run('robot_params.m');
 
 params.dt=0.01; % in matlab is used only to evaluate solution, but it will be sent to c++ to define the discretization for the path generation
 
-if ~isfile('../optimize_cpp_mex.mexa64')
+if ~isfile('optimize_cpp_mex.mexa64')
     disp('Generating C++ code');
     cfg = coder.config('mex');
     cfg.IntegrityChecks = false;
@@ -42,7 +42,7 @@ server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [0.5; -1.1238; 0.3638];
+pf = [1.; 1.538; 0.4];
 
 
 client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
