@@ -13,6 +13,13 @@ function resp = OptimCallback(req,resp)
     p0 = p0(:);
     pf = pf(:);
     
+    %check if omega is feasible
+    [feas_omega_min, feas_omega_max] = computeFeasibleOmega(params.v_max);
+    if (params.omega_max)>feas_omega_max
+        fprintf(2, "OMEGA IN DUBINS IS BEYOND THE LIMITS setting to %f\n",feas_omega_max );
+        params.omega_max = feas_omega_max;
+    end
+
     dubConnObj = dubinsConnection;
     curvature_max = params.omega_max/params.v_max;
     dubConnObj.MinTurningRadius = 1/curvature_max;
@@ -42,7 +49,8 @@ function resp = OptimCallback(req,resp)
         resp.des_v = v_input;
         resp.des_omega = omega_input;
         resp.dt = params.dt;
-
+        plot_dubins(p0, pf, params);
+        fprintf(2,"NEW dubins_optim\n")
 
         
     elseif strcmp(req.plan_type, "optim")    

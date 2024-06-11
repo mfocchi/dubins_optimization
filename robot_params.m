@@ -24,7 +24,7 @@ params.omega_w_max = 1500 *RPM2RADS/ tau_gearbox; % the decision variables are t
                                                
 params.omega_max = 1.5;
 params.omega_min = -1.5;
-params.v_max = 0.1;
+params.v_max = 0.2;
 params.v_min = 0.01; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
 params.VELOCITY_LIMITS = true;
 params.t_max = 80; %TODO put a check on this
