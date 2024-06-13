@@ -1,8 +1,10 @@
 function [omega_min, omega_max] = computeFeasibleOmega(long_v)
+
+    %TODO these should not be hardcoded!
     constants.GEARBOX = 34.45;
     constants.TRACK_WIDTH = 0.606;
     constants.SPROCKET_RADIUS = 0.0856;
-    constants.WHEEL_MAX = 160;
+    constants.WHEEL_MAX =  209;
     
 
     

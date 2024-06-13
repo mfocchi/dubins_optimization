@@ -42,7 +42,7 @@ server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [0.5; 1.1238; -0.3];
+pf = [1.5; 2.1238; pi/2];
 
 
 client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
