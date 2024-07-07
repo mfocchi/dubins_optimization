@@ -34,6 +34,7 @@ if ~isfile('../optimize_cpp_mex.mexa64')
     cfg.IntegrityChecks = false;
     cfg.SaturateOnIntegerOverflow = false;
     codegen -config cfg  optimize_cpp -args {zeros(3,1), zeros(3,1),coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]),0, coder.cstructname(params, 'param') } -nargout 1 -report
+    movefile('optimize_cpp_mex.mexa64','../');
 end
 
 
@@ -42,7 +43,7 @@ server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [1.5; 2.1238; pi/2];
+pf = [2.; 2.5; 0.];
 
 
 client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
