@@ -11,13 +11,13 @@ params.w2= 1; % smoothing on omega, v
 params.w3= 0; % smoothing on xy_der
 params.w4= 0; %smoothing on theta der 
 
-tau_gearbox = 34.45;
+params.gearbox = 34.45;
 %params.model = 'UNICYCLE';
 params.model = 'SIDEONLY';
 %params.model = 'LONGSIDE';
 % max rpm for the motor = 1500, selecting some value below
 RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 2000 *RPM2RADS/ tau_gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s
+params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s
                                                   % these correspond to
                                                   % v_max = 0.42 and
                                                   % omega_max =1.4
