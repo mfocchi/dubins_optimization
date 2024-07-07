@@ -1,14 +1,31 @@
-function resp = OptimCallback(req,resp)
+function resp = OptimCallback(req,resp, type_of_ros)
+
+    if nargin<3
+        type_of_ros = 'ros2'
+    end
+
     global params  
     clc
-    p0(1) = req.x0;
-    p0(2) = req.y0;
-    p0(3) = req.theta0;
-    
-    pf(1) = req.xf;
-    pf(2) = req.yf;
-    pf(3) = req.thetaf;
-    
+
+    if strcmp(type_of_ros, 'ros2')
+        p0(1) = req.x0;
+        p0(2) = req.y0;
+        p0(3) = req.theta0;
+        
+        pf(1) = req.xf;
+        pf(2) = req.yf;
+        pf(3) = req.thetaf;
+    elseif strcmp(type_of_ros, 'ros1')
+        p0(1) = req.X0;
+        p0(2) = req.Y0;
+        p0(3) = req.Theta0;
+        
+        pf(1) = req.Xf;
+        pf(2) = req.Yf;
+        pf(3) = req.Thetaf;
+    else
+        disp('wrong ros version')
+    end
     %make them columns
     p0 = p0(:);
     pf = pf(:);
@@ -43,14 +60,26 @@ function resp = OptimCallback(req,resp)
         params.int_steps = 0;
         params.model = 'UNICYCLE'; %need to set unicycle!!!
         %integrate the fine grid omegas
-        [states, t] = computeRollout(p0, 0,params.dt, length(omega_l_fine), omega_l_fine, omega_r_fine, params);
-        resp.des_x = states(1,:);
-        resp.des_y = states(2,:);
-        resp.des_theta = states(3,:);
+        [states, t] = computeRollout(p0, 0,params.dt, length(omega_l_fine), omega_l_fine, omega_r_fine, params);   
         [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params);
-        resp.des_v = v_input;
-        resp.des_omega = omega_input;
-        resp.dt = params.dt;
+        if strcmp(type_of_ros, 'ros2')
+                resp.des_x = states(1,:);
+                resp.des_y = states(2,:);
+                resp.des_theta = states(3,:);
+                resp.des_v = v_input;
+                resp.des_omega = omega_input;
+                resp.dt = params.dt;
+        elseif strcmp(type_of_ros, 'ros1')
+            resp.Des_x = states(1,:);
+            resp.Des_y = states(2,:);
+            resp.Des_theta = states(3,:);
+            resp.Des_v = v_input;
+            resp.Des_omega = omega_input;
+            resp.Dt = params.dt;
+        else
+            disp('wrong ros version')
+        end
+
         plot_dubins(p0, pf, params);
         fprintf(2,"NEW dubins_optim\n")
 
@@ -62,18 +91,32 @@ function resp = OptimCallback(req,resp)
         %these vectors are too big to transfer to the robot TODO if you fix
         %C++  side then send these otherwise you can have integration
         %errors
-         resp.des_x = solution.p_fine(1,:);
-         resp.des_y = solution.p_fine(2,:);
-         resp.des_theta = solution.p_fine(3,:);
-         resp.des_v = solution.v_input_fine;
-         resp.des_omega = solution.omega_input_fine;
+         
 
-        % resp.des_x = solution.p(1,:);
-        % resp.des_y = solution.p(2,:);
-        % resp.des_theta = solution.p(3,:);
-        % resp.des_v = solution.v_input;
-        % resp.des_omega = solution.omega_input;
-        resp.dt = params.dt;
+        if strcmp(type_of_ros, 'ros2')
+             resp.des_x = solution.p_fine(1,:);
+             resp.des_y = solution.p_fine(2,:);
+             resp.des_theta = solution.p_fine(3,:);
+             resp.des_v = solution.v_input_fine;
+             resp.des_omega = solution.omega_input_fine;
+    
+            % resp.des_x = solution.p(1,:);
+            % resp.des_y = solution.p(2,:);
+            % resp.des_theta = solution.p(3,:);
+            % resp.des_v = solution.v_input;
+            % resp.des_omega = solution.omega_input;
+            resp.dt = params.dt;
+        elseif strcmp(type_of_ros, 'ros1')
+             resp.Des_x = solution.p_fine(1,:);
+             resp.Des_y = solution.p_fine(2,:);
+             resp.Des_theta = solution.p_fine(3,:);
+             resp.Des_v = solution.v_input_fine;
+             resp.Des_omega = solution.omega_input_fine;
+             resp.Dt = params.dt;
+        else
+            disp('wrong ros version')
+        end
+
         %solution.Tf
         %length(resp.des_theta)
         disp('Duration Tf')

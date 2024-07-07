@@ -19,9 +19,16 @@ homedir = getenv('HOME');
 % clear classes
 % rehash toolboxcache
 
+type_of_ros = 'ros2';
 
-node_1 = ros2node("optim_server");
-node_2 = ros2node("optim_client");
+if strcmp(type_of_ros,'ros2')
+    node_1 = ros2node("optim_server");
+    node_2 = ros2node("optim_client");
+else
+    masterHost = 'localhost';
+    node_1 = ros.Node('optim_server', masterHost);
+    node_2 = ros.Node('optim_client', masterHost);
+end
 
 %THESE ARE THE SETTINGS THE ROBOT WILL USE!
 run('robot_params.m');
@@ -38,32 +45,42 @@ if ~isfile('../optimize_cpp_mex.mexa64')
 end
 
 
-server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
+if strcmp(type_of_ros,'ros2')
+    server = ros2svcserver(node_1,"/optim","optim_interfaces/Optim",@OptimCallback);
+else
+    server = rossvcserver(node_1, '/optim', 'optim_interfaces/Optim', @OptimCallback,'DataFormat','struct');
+end
+
 %client
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
 pf = [2.; 2.5; 0.];
+plan_type = 'optim'; % 'optim' 'dubins'
 
+if strcmp(type_of_ros,'ros2')
+    client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
+    req = ros2message(client);
+    req.x0 = p0(1);
+    req.y0 = p0(2);
+    req.theta0 = p0(3);
+    
+    req.xf= pf(1);
+    req.yf = pf(2);
+    req.thetaf = pf(3);
+    req.plan_type=plan_type
 
-client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
-req = ros2message(client);
+    numCallFailures = 0;
+    [resp,status,statustext] = call(client,req,"Timeout",10);
+    if ~status
+        numCallFailures = numCallFailures + 1;
+        fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
+    end
 
-req.x0 = p0(1);
-req.y0 = p0(2);
-req.theta0 = p0(3);
-
-req.xf= pf(1);
-req.yf = pf(2);
-req.thetaf = pf(3);
-
-req.plan_type='dubins'; % 'optim' 'dubins'
-
-numCallFailures = 0;
-[resp,status,statustext] = call(client,req,"Timeout",10);
-if ~status
-    numCallFailures = numCallFailures + 1;
-    fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
+else
+    client = rossvcclient(node_2,"/optim","DataFormat","struct");
+    req = rosmessage(client);
+    resp = call(client,req, "Timeout",3)
 end
 
 %disp(length(resp.des_x))
