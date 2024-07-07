@@ -56,6 +56,7 @@ function resp = OptimCallback(req,resp)
 
         
     elseif strcmp(req.plan_type, "optim")    
+        
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
         plot_solution(solution,p0, pf, params, false);
         %these vectors are too big to transfer to the robot TODO if you fix
@@ -75,8 +76,9 @@ function resp = OptimCallback(req,resp)
         resp.dt = params.dt;
         %solution.Tf
         %length(resp.des_theta)
-
+        disp('Duration Tf')
         solution.Tf
+        disp('achieved target')
         solution.achieved_target
 
 

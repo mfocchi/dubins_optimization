@@ -17,14 +17,19 @@ params.model = 'SIDEONLY';
 %params.model = 'LONGSIDE';
 % max rpm for the motor = 1500, selecting some value below
 RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s
-                                                  % these correspond to
-                                                  % v_max = 0.42 and
-                                                  % omega_max =1.4
-                                               
-params.omega_max = 0.3;
-params.omega_min = -0.3;
-params.v_max = 0.3;
+
+% %high speed (to be used with high slippage)
+% params.omega_w_max = 7000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                             
+% params.omega_max = 0.8;
+% params.omega_min = -0.8;
+% params.v_max = 0.8;
+
+%exp
+params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                               
+params.omega_max = 0.4;
+params.omega_min = -0.4;
+params.v_max = 0.4;
+
 params.v_min = 0.01; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
 params.VELOCITY_LIMITS = true;
 params.t_max = 80; %TODO put a check on this
@@ -43,5 +48,13 @@ params.beta_slip_outer_coefficients_left =  [  0.0588 ,  -2.6375];
 params.beta_slip_inner_coefficients_right = [ -0.0618 ,   3.0089];
 params.beta_slip_outer_coefficients_right = [  0.0906,    3.7924];
 
+%high slippage
+
+% params.side_slip_angle_coefficients_left = [4*-0.3795,  0.2* -3.3784];
+% params.side_slip_angle_coefficients_right = [4*0.4587,   0.2* 3.8471];
+% params.beta_slip_inner_coefficients_left = [ 4*-0.0579,  0.2* -2.4456];
+% params.beta_slip_outer_coefficients_left =  [ 4* 0.0588 ,  0.2*-2.6375];
+% params.beta_slip_inner_coefficients_right = [ 4*-0.0618 ,   0.2*3.0089];
+% params.beta_slip_outer_coefficients_right = [4*  0.0906,    0.2*3.7924];
 
 

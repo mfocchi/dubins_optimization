@@ -14,10 +14,20 @@ DEBUG = true; %shows local orientation of trajectory and all the plots
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
+%high speed target
+%pf = [4.; 4.5; 0.];
+
 pf = [2.; 2.5; 0.];
-%pf = [0.5; -1.1238; 0.3638];
-%pf = [-0.2758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
 run('robot_params.m');
+
+
+%check if omega is feasible
+[feas_omega_min, feas_omega_max] = computeFeasibleOmega(params.v_max, params);
+if (params.omega_max)>feas_omega_max
+    fprintf(2, "OMEGA IN DUBINS IS BEYOND THE LIMITS setting to:  %f\n",feas_omega_max );
+    params.omega_max = feas_omega_max;
+end
+
 
 % % do init with dubins
 dubConnObj = dubinsConnection;
