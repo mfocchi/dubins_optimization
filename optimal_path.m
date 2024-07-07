@@ -14,7 +14,7 @@ DEBUG = true; %shows local orientation of trajectory and all the plots
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
-pf = [1.; 1.538; 0.4];
+pf = [2.; 2.5; 0.];
 %pf = [0.5; -1.1238; 0.3638];
 %pf = [-0.2758; -3.1238; 0.9638] % if you ask for a too sharp change in orientation in a too short distance it wont converge
 run('robot_params.m');
