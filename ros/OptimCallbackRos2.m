@@ -1,31 +1,20 @@
-function resp = OptimCallback(req,resp, type_of_ros)
+function resp = OptimCallbackRos2(req,resp)
 
-    if nargin<3
-        type_of_ros = 'ros2'
-    end
 
     global params  
     clc
+    
+   
 
-    if strcmp(type_of_ros, 'ros2')
-        p0(1) = req.x0;
-        p0(2) = req.y0;
-        p0(3) = req.theta0;
+    p0(1) = req.x0;
+    p0(2) = req.y0;
+    p0(3) = req.theta0;
+    
+    pf(1) = req.xf;
+    pf(2) = req.yf;
+    pf(3) = req.thetaf;
+    plan_type = req.plan_type;
         
-        pf(1) = req.xf;
-        pf(2) = req.yf;
-        pf(3) = req.thetaf;
-    elseif strcmp(type_of_ros, 'ros1')
-        p0(1) = req.X0;
-        p0(2) = req.Y0;
-        p0(3) = req.Theta0;
-        
-        pf(1) = req.Xf;
-        pf(2) = req.Yf;
-        pf(3) = req.Thetaf;
-    else
-        disp('wrong ros version')
-    end
     %make them columns
     p0 = p0(:);
     pf = pf(:);
@@ -53,7 +42,7 @@ function resp = OptimCallback(req,resp, type_of_ros)
     %map to wheel omega
     [omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
     
-    if strcmp(req.plan_type, "dubins")
+    if strcmp(plan_type, "dubins")
         %generate inputs from dubins om a fome grid (dt)
         [omega_l_fine, omega_r_fine, ] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas, params.dt);
         %integrate dubin on a fine grid (dt)
@@ -62,29 +51,19 @@ function resp = OptimCallback(req,resp, type_of_ros)
         %integrate the fine grid omegas
         [states, t] = computeRollout(p0, 0,params.dt, length(omega_l_fine), omega_l_fine, omega_r_fine, params);   
         [v_input,omega_input] = computeVelocitiesFromTracks(omega_l_fine, omega_r_fine, params);
-        if strcmp(type_of_ros, 'ros2')
-                resp.des_x = states(1,:);
-                resp.des_y = states(2,:);
-                resp.des_theta = states(3,:);
-                resp.des_v = v_input;
-                resp.des_omega = omega_input;
-                resp.dt = params.dt;
-        elseif strcmp(type_of_ros, 'ros1')
-            resp.Des_x = states(1,:);
-            resp.Des_y = states(2,:);
-            resp.Des_theta = states(3,:);
-            resp.Des_v = v_input;
-            resp.Des_omega = omega_input;
-            resp.Dt = params.dt;
-        else
-            disp('wrong ros version')
-        end
 
+        resp.des_x = states(1,:);
+        resp.des_y = states(2,:);
+        resp.des_theta = states(3,:);
+        resp.des_v = v_input;
+        resp.des_omega = omega_input;
+        resp.dt = params.dt;
         plot_dubins(p0, pf, params);
-        fprintf(2,"NEW dubins_optim\n")
+
+        fprintf(2,"NEW dubins\n")
 
         
-    elseif strcmp(req.plan_type, "optim")    
+    elseif strcmp(plan_type, "optim")    
         
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
         plot_solution(solution,p0, pf, params, false);
@@ -93,30 +72,21 @@ function resp = OptimCallback(req,resp, type_of_ros)
         %errors
          
 
-        if strcmp(type_of_ros, 'ros2')
-             resp.des_x = solution.p_fine(1,:);
-             resp.des_y = solution.p_fine(2,:);
-             resp.des_theta = solution.p_fine(3,:);
-             resp.des_v = solution.v_input_fine;
-             resp.des_omega = solution.omega_input_fine;
+
+         resp.des_x = solution.p_fine(1,:);
+         resp.des_y = solution.p_fine(2,:);
+         resp.des_theta = solution.p_fine(3,:);
+         resp.des_v = solution.v_input_fine;
+         resp.des_omega = solution.omega_input_fine;
     
             % resp.des_x = solution.p(1,:);
             % resp.des_y = solution.p(2,:);
             % resp.des_theta = solution.p(3,:);
             % resp.des_v = solution.v_input;
             % resp.des_omega = solution.omega_input;
-            resp.dt = params.dt;
-        elseif strcmp(type_of_ros, 'ros1')
-             resp.Des_x = solution.p_fine(1,:);
-             resp.Des_y = solution.p_fine(2,:);
-             resp.Des_theta = solution.p_fine(3,:);
-             resp.Des_v = solution.v_input_fine;
-             resp.Des_omega = solution.omega_input_fine;
-             resp.Dt = params.dt;
-        else
-            disp('wrong ros version')
-        end
+        resp.dt = params.dt;
 
+        fprintf(2,"NEW OPTIM\n")
         %solution.Tf
         %length(resp.des_theta)
         disp('Duration Tf')
