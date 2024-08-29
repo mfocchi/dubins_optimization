@@ -61,7 +61,7 @@ end
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
 pf = [2.; 2.5; 0.];
-plan_type = 'dubins'; % 'optim' 'dubins'
+plan_type = 'optim'; % 'optim' 'dubins'
 
 if strcmp(type_of_ros,'ros2')
     client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");

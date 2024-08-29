@@ -41,6 +41,16 @@ params.dt=0.001; % in matlab is used only to evaluate solution, but it will be s
 params.width = 0.606; % [m]
 params.sprocket_radius = 0.0856; % [m]
 
+
+params.side_slippage_estimation = 'EXP'; %NET EXP
+
+%loads models for NN (will be used inside the slide_slip_model.m)
+load("alpha_model_forcodegen.mat");
+% 
+% alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen'); 
+%         alpha = predict(alpha_model_forcodegen, [0.3, 0.4]);
+
+%settings for exp
 params.side_slip_angle_coefficients_left = [-0.3795,   -3.3784];
 params.side_slip_angle_coefficients_right = [0.4587,    3.8471];
 params.beta_slip_inner_coefficients_left = [ -0.0579,   -2.4456];
@@ -48,8 +58,16 @@ params.beta_slip_outer_coefficients_left =  [  0.0588 ,  -2.6375];
 params.beta_slip_inner_coefficients_right = [ -0.0618 ,   3.0089];
 params.beta_slip_outer_coefficients_right = [  0.0906,    3.7924];
 
-%high slippage
-
+%mid slippage
+% params.side_slip_angle_coefficients_left = [2*-0.3795,  0.2* -3.3784];
+% params.side_slip_angle_coefficients_right = [2*0.4587,   0.2* 3.8471];
+% params.beta_slip_inner_coefficients_left = [ 2*-0.0579,  0.2* -2.4456];
+% params.beta_slip_outer_coefficients_left =  [ 2* 0.0588 ,  0.2*-2.6375];
+% params.beta_slip_inner_coefficients_right = [ 2*-0.0618 ,   0.2*3.0089];
+% params.beta_slip_outer_coefficients_right = [2*  0.0906,    0.2*3.7924];
+% 
+% 
+% %high slippage
 % params.side_slip_angle_coefficients_left = [4*-0.3795,  0.2* -3.3784];
 % params.side_slip_angle_coefficients_right = [4*0.4587,   0.2* 3.8471];
 % params.beta_slip_inner_coefficients_left = [ 4*-0.0579,  0.2* -2.4456];

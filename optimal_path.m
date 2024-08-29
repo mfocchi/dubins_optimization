@@ -14,10 +14,10 @@ DEBUG = true; %shows local orientation of trajectory and all the plots
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
+pf = [2.; 2.5; 0.];
+
 %high speed target
 %pf = [4.; 4.5; 0.];
-
-pf = [2.; 2.5; 0.];
 run('robot_params.m');
 
 
@@ -59,7 +59,7 @@ if ~isfile('optimize_cpp_mex.mexa64')
 end
 
 mpc_fun   = 'optimize_cpp';
-if USEGENCODE
+if USEGENCODE  
     mpc_fun=append(mpc_fun,'_mex' );
 end
 mpc_fun_handler = str2func(mpc_fun);
