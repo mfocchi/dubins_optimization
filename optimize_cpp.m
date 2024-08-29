@@ -13,8 +13,9 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     end
     
     x0 = [ t0 ,  omega_l0,  omega_r0];
-    lb = [ 0  , -params.omega_w_max*ones(1,params.N_dyn),  -params.omega_w_max*ones(1,params.N_dyn)];
-    ub = [ params.t_max, params.omega_w_max*ones(1,params.N_dyn),  params.omega_w_max*ones(1,params.N_dyn)];
+     
+    lb = [ 0  , -params.omega_w_max*ones(1,length(omega_l0)),  -params.omega_w_max*ones(1,length(omega_r0))];
+    ub = [ params.t_max, params.omega_w_max*ones(1,length(omega_l0)),  params.omega_w_max*ones(1,length(omega_r0))];
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 100000, 'ConstraintTolerance',constr_tolerance);
 
