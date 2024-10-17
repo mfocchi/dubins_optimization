@@ -8,37 +8,61 @@ function dxdt = long_and_side_slip_model(x, wheel_l, wheel_r, params)
     v_input = r * (wheel_l + wheel_l) / 2.0;
     omega_input = r * (wheel_r - wheel_l) / B;
     
-    if omega_input == 0 &&  v_input~=0
-        turning_radius_input =  1e08*sign(v_input);
-    elseif omega_input == 0 &&  v_input==0
+    if strcmp(params.side_slippage_estimation,'EXP')
+
+            if omega_input == 0 &&  v_input~=0
+                turning_radius_input =  1e08*sign(v_input);
+            elseif omega_input == 0 &&  v_input==0
+                
+                turning_radius_input = 1e8;
+            else
+                 turning_radius_input = v_input / omega_input;
+            end
+            
+            % side slip        
+            if(turning_radius_input > 0.0) % turning left 
+                alpha = params.side_slip_angle_coefficients_left(1)*exp(params.side_slip_angle_coefficients_left(2)*turning_radius_input);
+            else % turning right
+                % inverting the slips with respect to test results   
+                alpha = params.side_slip_angle_coefficients_right(1)*exp(params.side_slip_angle_coefficients_right(2)*turning_radius_input);
+            end
         
-        turning_radius_input = 1e8;
+            %long slip
+            %compute track velocity from encoder
+            v_enc_l = r*wheel_l;
+            v_enc_r = r*wheel_r;
+        
+            %estimate beta_inner, beta_outer from turning radius
+            if(turning_radius_input >= 0.0)% turning left, positive radius, left wheel is inner right wheel is outer
+                beta_l = params.beta_slip_inner_coefficients_left(1)*exp(params.beta_slip_inner_coefficients_left(2)*turning_radius_input);
+                % the inner is accelerated the outer slowed down
+                beta_r = params.beta_slip_outer_coefficients_left(1)*exp(params.beta_slip_outer_coefficients_left(2)*turning_radius_input);
+            else % turning right, negative radius, left wheel is outer right is inner
+                beta_r = params.beta_slip_inner_coefficients_right(1)*exp(params.beta_slip_inner_coefficients_right(2)*turning_radius_input);     
+                beta_l =  params.beta_slip_outer_coefficients_right(1)*exp(params.beta_slip_outer_coefficients_right(2)*turning_radius_input);
+            end
+
+        
+    elseif strcmp(params.side_slippage_estimation,'NET')
+        
+        %%FAST (0.0020s) use martlab model trained with regressorLearner
+        alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen'); 
+        alpha = predict(alpha_model_forcodegen, [omega_l, omega_r]);
+
+        %%FAST (0.0020s) use martlab model trained with regressorLearner
+        beta_l_model_forcodegen = loadLearnerForCoder('beta_l_model_forcodegen'); 
+        beta_l = predict(beta_l_model_forcodegen, [omega_l, omega_r]);
+
+        %%FAST (0.0020s) use martlab model trained with regressorLearner
+        beta_r_model_forcodegen = loadLearnerForCoder('beta_r_model_forcodegen'); 
+        beta_l = predict(beta_r_model_forcodegen, [omega_l, omega_r]);
     else
-         turning_radius_input = v_input / omega_input;
-    end
-    
-    % side slip        
-    if(turning_radius_input > 0.0) % turning left 
-        alpha = params.side_slip_angle_coefficients_left(1)*exp(params.side_slip_angle_coefficients_left(2)*turning_radius_input);
-    else % turning right
-        % inverting the slips with respect to test results   
-        alpha = params.side_slip_angle_coefficients_right(1)*exp(params.side_slip_angle_coefficients_right(2)*turning_radius_input);
+       alpha = 0;
+       beta_l = 0;
+       beta_r = 0;
+       disp('wrong side slippage estimation setting')
     end
 
-    %long slip
-    %compute track velocity from encoder
-    v_enc_l = r*wheel_l;
-    v_enc_r = r*wheel_r;
-
-    %estimate beta_inner, beta_outer from turning radius
-    if(turning_radius_input >= 0.0)% turning left, positive radius, left wheel is inner right wheel is outer
-        beta_l = params.beta_slip_inner_coefficients_left(1)*exp(params.beta_slip_inner_coefficients_left(2)*turning_radius_input);
-        % the inner is accelerated the outer slowed down
-        beta_r = params.beta_slip_outer_coefficients_left(1)*exp(params.beta_slip_outer_coefficients_left(2)*turning_radius_input);
-    else % turning right, negative radius, left wheel is outer right is inner
-        beta_r = params.beta_slip_inner_coefficients_right(1)*exp(params.beta_slip_inner_coefficients_right(2)*turning_radius_input);     
-        beta_l =  params.beta_slip_outer_coefficients_right(1)*exp(params.beta_slip_outer_coefficients_right(2)*turning_radius_input);
-    end
 
     v_enc_l=v_enc_l+beta_l;
     v_enc_r=v_enc_r+beta_r;
