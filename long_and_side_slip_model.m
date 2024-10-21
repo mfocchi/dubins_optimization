@@ -1,12 +1,15 @@
-function dxdt = long_and_side_slip_model(x, wheel_l, wheel_r, params)
+function dxdt = long_and_side_slip_model(x, omega_l, omega_r, params)
     %omega_l/r are the unicycle wheel speed
     theta = x(3);    
     % ideal wheel speed in rad/s
     r = params.sprocket_radius;
     B = params.width; 
     %     % ideal linear and angular velocity
-    v_input = r * (wheel_l + wheel_l) / 2.0;
-    omega_input = r * (wheel_r - wheel_l) / B;
+    v_input = r * (omega_r + omega_l) / 2.0;
+    omega_input = r * (omega_r - omega_l) / B;
+    %compute track velocity from encoder
+    v_enc_l = r*omega_l;
+    v_enc_r = r*omega_r;
     
     if strcmp(params.side_slippage_estimation,'EXP')
 
@@ -27,10 +30,7 @@ function dxdt = long_and_side_slip_model(x, wheel_l, wheel_r, params)
                 alpha = params.side_slip_angle_coefficients_right(1)*exp(params.side_slip_angle_coefficients_right(2)*turning_radius_input);
             end
         
-            %long slip
-            %compute track velocity from encoder
-            v_enc_l = r*wheel_l;
-            v_enc_r = r*wheel_r;
+            %long slip    
         
             %estimate beta_inner, beta_outer from turning radius
             if(turning_radius_input >= 0.0)% turning left, positive radius, left wheel is inner right wheel is outer
@@ -46,16 +46,16 @@ function dxdt = long_and_side_slip_model(x, wheel_l, wheel_r, params)
     elseif strcmp(params.side_slippage_estimation,'NET')
         
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen'); 
+        alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen'); 
         alpha = predict(alpha_model_forcodegen, [omega_l, omega_r]);
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        beta_l_model_forcodegen = loadLearnerForCoder('beta_l_model_forcodegen'); 
+        beta_l_model_forcodegen = loadLearnerForCoder('matlabNN/beta_l_model_forcodegen'); 
         beta_l = predict(beta_l_model_forcodegen, [omega_l, omega_r]);
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        beta_r_model_forcodegen = loadLearnerForCoder('beta_r_model_forcodegen'); 
-        beta_l = predict(beta_r_model_forcodegen, [omega_l, omega_r]);
+        beta_r_model_forcodegen = loadLearnerForCoder('matlabNN/beta_r_model_forcodegen'); 
+        beta_r = predict(beta_r_model_forcodegen, [omega_l, omega_r]);
     else
        alpha = 0;
        beta_l = 0;
@@ -67,12 +67,12 @@ function dxdt = long_and_side_slip_model(x, wheel_l, wheel_r, params)
     v_enc_l=v_enc_l+beta_l;
     v_enc_r=v_enc_r+beta_r;
 
-    wheel_l_s = 1/r * v_enc_l;
-    wheel_r_s = 1/r * v_enc_r;
+    omega_l_s = 1/r * v_enc_l;
+    omega_r_s = 1/r * v_enc_r;
 
     % actual linear and angular velocity
-    v_input_s     = r * (wheel_r_s + wheel_l_s) / 2;
-    omega_input_s = r * (wheel_r_s - wheel_l_s) / B;
+    v_input_s     = r * (omega_r_s + omega_l_s) / 2;
+    omega_input_s = r * (omega_r_s - omega_l_s) / B;
          
     dxdt = [v_input_s*(cos(theta)-sin(theta)*tan(alpha)); v_input_s*(sin(theta)+cos(theta)*tan(alpha)); omega_input_s];
 end

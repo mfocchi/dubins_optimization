@@ -60,7 +60,7 @@ end
 % INITIAL STATE (X,Y, THETA)
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
-pf = [2.; 2.5; 0.];
+pf = [2.; 2.5; -0.4];
 plan_type = 'optim'; % 'optim' 'dubins'
 
 if strcmp(type_of_ros,'ros2')
@@ -82,14 +82,16 @@ if strcmp(type_of_ros,'ros2')
         numCallFailures = numCallFailures + 1;
         fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
     end
-
-      disp(length(resp.des_x))
-    resp.des_x'
-    resp.des_y'
-    resp.des_theta'
-    resp.des_v'
-    resp.des_omega'
+    
+    fprintf("length of traj: %d\n",length(resp.des_x))
+    fprintf("last 20 values of desX %2.5f\n",resp.des_x(end-20:end)')
+    % resp.des_x(1:20)'
+    % resp.des_y(1:20)'
+    % resp.des_theta(1:20)'
+    % resp.des_v(1:20)'
+    % resp.des_omega(1:20)'
     resp.dt
+      
 else
 
     client = rossvcclient("/optim","DataFormat","struct");
@@ -107,18 +109,19 @@ else
 
     if isServerAvailable(client)
         tic
-        resp = call(client,req, "Timeout",5)
+        resp = call(client,req, "Timeout",10)
         toc
     else
         error("Service server not available on network")
     end
 
-    disp(length(resp.DesX))
-    resp.DesX(1:20)'
-    resp.DesY(1:20)'
-    resp.DesTheta(1:20)'
-    resp.DesV(1:20)'
-    resp.DesOmega(1:20)'
+    fprintf("length of traj: %d\n",length(resp.DesX))
+    fprintf("last 20 values of desX %2.5f\n",resp.DesX(end-9:end)')
+    % resp.DesX(1:20)'
+    % resp.DesY(1:20)'
+    % resp.DesTheta(1:20)'
+    % resp.DesV(1:20)'
+    % resp.DesOmega(1:20)'
     resp.Dt
 
 end

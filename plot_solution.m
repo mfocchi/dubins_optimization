@@ -63,14 +63,14 @@ if (DEBUG)
         plot(solution.time, beta_l,'ro-') ; hold on;    grid on;
         plot(solution.time, beta_r,'bo-') ;    
         legend({'beta_l','beta_r'});
-        ylabel('slippage')
+        ylabel('long slippage')
         
         subplot(3,1,3)
-        plot(solution.time, R,'ro-') ; hold on;    grid on;
-        ylim([-1 1]);
-        ylabel('radius')
-      
-       
+        plot(solution.time, log(1+abs(R)),'ro-') ; hold on;    grid on;
+        
+        ylim([-0 4]);
+        ylabel('$log(1+\Vert R \Vert $)','interpreter','latex')
+     
         
     
     end

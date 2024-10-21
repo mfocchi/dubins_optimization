@@ -42,7 +42,7 @@ function dxdt = side_slip_model(x, omega_l, omega_r, params)
         % cd('../../');
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen'); 
+        alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen'); 
         alpha = predict(alpha_model_forcodegen, [omega_l, omega_r]);
        
     else

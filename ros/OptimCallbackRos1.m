@@ -3,6 +3,7 @@ function resp = OptimCallbackRos1(~, req,resp)
 
     global params  
     clc
+    close all
     
    
 
