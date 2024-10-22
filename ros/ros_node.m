@@ -38,8 +38,6 @@ end
 %THESE ARE THE SETTINGS THE ROBOT WILL USE!
 run('robot_params.m');
 
-params.dt=0.01; % in matlab is used only to evaluate solution, but it will be sent to c++ to define the discretization for the path generation
-
 if ~isfile('../optimize_cpp_mex.mexa64')
     disp('Generating C++ code');
     cfg = coder.config('mex');
