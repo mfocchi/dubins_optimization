@@ -75,7 +75,7 @@ if strcmp(type_of_ros,'ros2')
 
 
     numCallFailures = 0;
-    [resp,status,statustext] = call(client,req,"Timeout",10);
+    [resp,status,statustext] = call(client,req,"Timeout",30);
     if ~status
         numCallFailures = numCallFailures + 1;
         fprintf("Call failure number %d. Error cause: %s\n",numCallFailures,statustext);
@@ -107,7 +107,7 @@ else
 
     if isServerAvailable(client)
         tic
-        resp = call(client,req, "Timeout",10)
+        resp = call(client,req, "Timeout",30)
         toc
     else
         error("Service server not available on network")
