@@ -4,6 +4,7 @@ rosinit
 global params 
 
 addpath("../");
+addpath("../matlabNN");
 
 %https://it.mathworks.com/help/ros/ug/call-and-provide-ros2-services.html
 homedir = getenv('HOME');

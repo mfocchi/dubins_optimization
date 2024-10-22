@@ -1,4 +1,7 @@
 function dxdt = side_slip_model(x, omega_l, omega_r, params)
+ % Define persistent neural network model
+    persistent alpha_model_forcodegen;
+
     %omega_l/r are the unicycle wheel speed
     theta = x(3);    
     % ideal wheel speed in rad/s
@@ -42,7 +45,11 @@ function dxdt = side_slip_model(x, omega_l, omega_r, params)
         % cd('../../');
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen'); 
+         if isempty(alpha_model_forcodegen)
+            % Load the model only once
+            alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen');
+         end
+       
         alpha = predict(alpha_model_forcodegen, [omega_l, omega_r]);
        
     else

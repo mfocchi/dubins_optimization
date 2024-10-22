@@ -1,4 +1,8 @@
 function dxdt = long_and_side_slip_model(x, omega_l, omega_r, params)
+    persistent alpha_model_forcodegen;
+    persistent beta_l_model_forcodegen;
+    persistent beta_r_model_forcodegen;
+
     %omega_l/r are the unicycle wheel speed
     theta = x(3);    
     % ideal wheel speed in rad/s
@@ -45,16 +49,28 @@ function dxdt = long_and_side_slip_model(x, omega_l, omega_r, params)
         
     elseif strcmp(params.side_slippage_estimation,'NET')
         
+         if isempty(alpha_model_forcodegen)
+            % Load the model only once
+            alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen');
+         end
+         if isempty(beta_l_model_forcodegen)
+            % Load the model only once
+            beta_l_model_forcodegen = loadLearnerForCoder('matlabNN/beta_l_model_forcodegen');
+         end
+
+         if isempty(beta_r_model_forcodegen)
+            % Load the model only once
+            beta_r_model_forcodegen = loadLearnerForCoder('matlabNN/beta_r_model_forcodegen');
+         end
+
+
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen'); 
         alpha = predict(alpha_model_forcodegen, [omega_l, omega_r]);
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        beta_l_model_forcodegen = loadLearnerForCoder('matlabNN/beta_l_model_forcodegen'); 
         beta_l = predict(beta_l_model_forcodegen, [omega_l, omega_r]);
 
         %%FAST (0.0020s) use martlab model trained with regressorLearner
-        beta_r_model_forcodegen = loadLearnerForCoder('matlabNN/beta_r_model_forcodegen'); 
         beta_r = predict(beta_r_model_forcodegen, [omega_l, omega_r]);
     else
        alpha = 0;
