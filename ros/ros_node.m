@@ -108,7 +108,7 @@ else
 
     if isServerAvailable(client)
         tic
-        resp = call(client,req, "Timeout",30)
+        resp = call(client,req, "Timeout",100)
         toc
     else
         error("Service server not available on network")

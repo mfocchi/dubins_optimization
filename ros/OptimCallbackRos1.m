@@ -2,7 +2,7 @@ function resp = OptimCallbackRos1(~, req,resp)
 
 
     global params  
-    clc
+    %clc
     close all
     
    
@@ -86,7 +86,7 @@ function resp = OptimCallbackRos1(~, req,resp)
         %length(resp.des_theta)
         disp('Duration Tf')
         solution.Tf
-        disp('achieved target')
+        disp('Achieved target')
         solution.achieved_target
 
 
