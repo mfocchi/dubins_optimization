@@ -26,6 +26,7 @@ function resp = OptimCallbackRos2(req,resp)
     if (params.omega_max)>feas_omega_max
         fprintf(2, "OMEGA IN DUBINS IS BEYOND THE LIMITS setting to:  %f\n",feas_omega_max );
         params.omega_max = feas_omega_max;
+        params.omega_min = -feas_omega_max;
     end
 
     dubConnObj = dubinsConnection;

@@ -19,8 +19,8 @@ params.model = 'LONGSIDE';
 
 RPM2RADS = 1/60*2*pi;
 params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                               
-params.omega_max = 0.4;
-params.omega_min = -0.4;
+params.omega_max = 1.8;
+params.omega_min = -1.8;
 params.v_max = 0.4;
 params.v_min = 0.; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
 params.VELOCITY_LIMITS = true;
