@@ -22,7 +22,7 @@ params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables ar
 params.omega_max = 1.8;
 params.omega_min = -1.8;
 params.v_max = 0.4;
-params.v_min = 0.; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
+params.v_min = 0.4; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
 params.VELOCITY_LIMITS = true;
 params.t_max = 80; %TODO put a check on this
 params.slack_target = 0.02;
