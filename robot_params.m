@@ -18,7 +18,7 @@ params.model = 'LONGSIDE';
 
 
 RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 2000 *RPM2RADS/ params.gearbox; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                               
+params.omega_w_max = 10; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                               
 params.omega_max = 1.8;
 params.omega_min = -1.8;
 params.v_max = 0.4;
