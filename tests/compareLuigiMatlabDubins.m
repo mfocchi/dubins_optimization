@@ -24,7 +24,7 @@ curvature_max = params.omega_max/params.v_max;
 % curvature_max = params.omega_max/params.v_max;
 
 
-%LUIGI
+%LUIGI DUBINS
 grid on;
 dubinsObj= dubinsClass;
 % Find optimal Dubins solution
@@ -35,10 +35,12 @@ title('LUIGI dubin')
 dubinsObj.plotdubins(curve, true, [1 0 0], [0 0 0], [1 0 0])
 
 
-%matlab 
+%matlab DUBINS
 dubConnObj = dubinsConnection;
 dubConnObj.MinTurningRadius = 1/curvature_max;
 [pathSegObj, pathCosts] = connect(dubConnObj,p0,pf);
+% the data is in pathSegObj{1} not that the theta is not wrapped! so
+% negative thetas are positive ones (i.e. +2pi)
 figure(2)
 show(pathSegObj{1})
 title('MATLAB dubin')
@@ -54,10 +56,11 @@ params.int_steps = 0;
 [states, t] = computeRollout(p0, 0,dt, length(omega_l0), omega_l0, omega_r0, params);
 
 %compare with the rough one
-% 
 % [omega_rough_l0, omega_rough_r0, time_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
 % params.int_steps = 0;
-% [states, t] = computeRollout(p0, 0,dt, params.N_dyn, omega_rough_l0, omega_rough_r0, params);
+% total_duration = sum(pathSegObj{1}.MotionLengths) / params.v_max;
+% dt_dyn = total_duration/ params.N_dyn;
+% [states, t] = computeRollout(p0, 0,dt_dyn, params.N_dyn, omega_rough_l0, omega_rough_r0, params);
 
 x = states(1,:);
 y = states(2,:);
