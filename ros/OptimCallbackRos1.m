@@ -65,7 +65,8 @@ function resp = OptimCallbackRos1(~, req,resp)
 
         plot_dubins(p0, pf, params);
         fprintf(2,"NEW dubins\n")
-
+        disp('Duration Tf')
+        Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max
         
     elseif strcmp(plan_type, "optim")    
         
@@ -87,9 +88,10 @@ function resp = OptimCallbackRos1(~, req,resp)
         %length(resp.des_theta)
         disp('Duration Tf')
         solution.Tf
-        disp('Achieved target')
+        disp('Achieved targetcl')
         solution.achieved_target
-
+        solution.omega_input_fine(1)
+        solution.omega_input_fine(end)
 
     else
         disp("wrong plan type")

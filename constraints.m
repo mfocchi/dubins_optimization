@@ -46,17 +46,17 @@ function [ineq, eq, solution_constr] = constraints(x,   p0,  pf, params)
 %     
 
 if params.VELOCITY_LIMITS 
-    
-    for i=1:params.N_dyn   
-        
-         ineq = [ineq  (-omega_input(i) + params.omega_min) ];  % omega  > omega_min ->  omega_min - omega <0
-    end 
-
-    for i=1:params.N_dyn     
-      
-         ineq = [ineq  (omega_input(i)  -params.omega_max)];% omega  < omega_max  ->    omega - omega_max<0
-    end 
-    
+    % I comment these cause I have already on wheelmax
+    % for i=1:params.N_dyn   
+    % 
+    %      ineq = [ineq  (-omega_input(i) + params.omega_min) ];  % omega  > omega_min ->  omega_min - omega <0
+    % end 
+    % 
+    % for i=1:params.N_dyn     
+    % 
+    %      ineq = [ineq  (omega_input(i)  -params.omega_max)];% omega  < omega_max  ->    omega - omega_max<0
+    % end 
+    % 
     for i=1:params.N_dyn     
          ineq = [ineq  (-v_input(i) + params.v_min) ]; % v  > v_min ->  v_min - v <0
     end 
