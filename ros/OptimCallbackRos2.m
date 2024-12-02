@@ -13,6 +13,7 @@ function resp = OptimCallbackRos2(req,resp)
     pf(1) = req.xf;
     pf(2) = req.yf;
     pf(3) = req.thetaf;
+    params.v_max = req.vmax;
     plan_type = req.plan_type;
         
     %make them columns
@@ -59,10 +60,14 @@ function resp = OptimCallbackRos2(req,resp)
         resp.des_v = v_input;
         resp.des_omega = omega_input;
         resp.dt = params.dt;
-        plot_dubins(p0, pf, params);
 
         fprintf(2,"NEW dubins\n")
 
+        plot_dubins(p0, pf, params);
+        fprintf(2,"NEW dubins\n")
+        disp('Duration Tf')
+        Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max
+        resp.tf = Tf;
         
     elseif strcmp(plan_type, "optim")    
         
@@ -86,6 +91,7 @@ function resp = OptimCallbackRos2(req,resp)
             % resp.des_v = solution.v_input;
             % resp.des_omega = solution.omega_input;
         resp.dt = params.dt;
+        resp.tf = solution.Tf;
 
         fprintf(2,"NEW OPTIM\n")
         %solution.Tf

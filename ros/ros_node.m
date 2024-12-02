@@ -15,7 +15,8 @@ homedir = getenv('HOME');
 % cd('../') % you need to move to the parent folder that
 % contains the optim_interfaces package with the srv folder
 % rmdir('matlab_msg_gen','s') % removes the previous folder
-% rosgenmsg / ros2genmsg % this creates the new  matlab_msg_gen folder inside  lyapunov_slippage_controller, (CreateShareableFile= true ) creates the zip
+% rosgenmsg / ros2genmsg % this creates the new  matlab_msg_gen folder, if it does not work be sure you wrote properly the msg file eg with proper data types (CreateShareableFile= true ) creates the zip
+% addpath('matlab_msg_gen_ros1/glnxa64/install/m'); savepath
 % clear classes
 % rehash toolboxcache
 %
@@ -60,7 +61,8 @@ end
 p0 = [0.0; 0.0; -0.]; 
 %FINAL STATE  (X,Y, THETA)
 pf = [2.; 2.5; -0.4];
-plan_type = 'optim'; % 'optim' 'dubins'
+vmax = 0.4;
+plan_type = 'dubins'; % 'optim' 'dubins'
 
 if strcmp(type_of_ros,'ros2')
     client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
@@ -72,6 +74,7 @@ if strcmp(type_of_ros,'ros2')
     req.xf= pf(1);
     req.yf = pf(2);
     req.thetaf = pf(3);
+    req.vmax = vmax;
     req.plan_type=plan_type;
 
 
@@ -102,6 +105,7 @@ else
     req.Xf= pf(1);
     req.Yf = pf(2);
     req.Thetaf = pf(3);
+    req.Vmax = vmax;
     req.PlanType=plan_type;
 
 
@@ -122,6 +126,7 @@ else
     % resp.DesV(1:20)'
     % resp.DesOmega(1:20)'
     resp.Dt
+    resp.Tf
 
 end
 

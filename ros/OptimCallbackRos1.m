@@ -14,6 +14,7 @@ function resp = OptimCallbackRos1(~, req,resp)
     pf(1) = req.Xf;
     pf(2) = req.Yf;
     pf(3) = req.Thetaf;
+    params.v_max = req.Vmax; %overwrite default with user one
     plan_type = req.PlanType;
     
 
@@ -61,13 +62,13 @@ function resp = OptimCallbackRos1(~, req,resp)
         resp.DesV = v_input;
         resp.DesOmega = omega_input;
         resp.Dt = params.dt;
-    
+        
 
         plot_dubins(p0, pf, params);
         fprintf(2,"NEW dubins\n")
         disp('Duration Tf')
         Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max
-        
+        resp.Tf = Tf;
     elseif strcmp(plan_type, "optim")    
         
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
@@ -82,7 +83,8 @@ function resp = OptimCallbackRos1(~, req,resp)
         resp.DesV = solution.v_input_fine;
         resp.DesOmega = solution.omega_input_fine;
         resp.Dt = params.dt;
-        
+        resp.Tf = solution.Tf;
+
         fprintf(2,"NEW OPTIM\n")
         %solution.Tf
         %length(resp.des_theta)
@@ -90,9 +92,6 @@ function resp = OptimCallbackRos1(~, req,resp)
         solution.Tf
         disp('Achieved targetcl')
         solution.achieved_target
-        solution.omega_input_fine(1)
-        solution.omega_input_fine(end)
-
     else
         disp("wrong plan type")
     end
