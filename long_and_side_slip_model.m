@@ -51,16 +51,16 @@ function dxdt = long_and_side_slip_model(x, omega_l, omega_r, params)
         
          if isempty(alpha_model_forcodegen)
             % Load the model only once
-            alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen');
+            alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen');
          end
          if isempty(beta_l_model_forcodegen)
             % Load the model only once
-            beta_l_model_forcodegen = loadLearnerForCoder('matlabNN/beta_l_model_forcodegen');
+            beta_l_model_forcodegen = loadLearnerForCoder('beta_l_model_forcodegen');
          end
 
          if isempty(beta_r_model_forcodegen)
             % Load the model only once
-            beta_r_model_forcodegen = loadLearnerForCoder('matlabNN/beta_r_model_forcodegen');
+            beta_r_model_forcodegen = loadLearnerForCoder('beta_r_model_forcodegen');
          end
 
 

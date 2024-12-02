@@ -53,14 +53,14 @@ for i=1:length(omega_input)
     elseif strcmp(params.side_slippage_estimation,'NET')
 
 
-        alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen');
+        alpha_model_forcodegen = loadLearnerForCoder('alpha_model_forcodegen');
         alpha(i) = predict(alpha_model_forcodegen, [wheel_l(i), wheel_r(i)]);
         
         if strcmp(params.model, 'LONGSIDE')
-            beta_l_model_forcodegen = loadLearnerForCoder('matlabNN/beta_l_model_forcodegen');
+            beta_l_model_forcodegen = loadLearnerForCoder('beta_l_model_forcodegen');
             beta_l(i) = predict(beta_l_model_forcodegen, [wheel_l(i), wheel_r(i)]);
     
-            beta_r_model_forcodegen = loadLearnerForCoder('matlabNN/beta_r_model_forcodegen');
+            beta_r_model_forcodegen = loadLearnerForCoder('beta_r_model_forcodegen');
             beta_r(i) = predict(beta_r_model_forcodegen, [wheel_l(i), wheel_r(i)]);
         else
             beta_l(i) = 0;
