@@ -35,17 +35,17 @@ function resp = OptimCallbackRos1(~, req,resp)
     dubConnObj = dubinsConnection;
     curvature_max = params.omega_max/params.v_max;
     dubConnObj.MinTurningRadius = 1/curvature_max;
-    disp(dubConnObj.MinTurningRadius);
+    
     [pathSegObj, pathCosts] = connect(dubConnObj,p0',pf');
     %show(pathSegObj{1})
     % get total time
     t0 = sum(pathSegObj{1}.MotionLengths)/params.v_max;
-  
+
     % compute the omega from dubin
     omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
     %map to wheel omega
     [omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
-    
+
     if strcmp(plan_type, "dubins")
         %generate inputs from dubins om a fome grid (dt)
         [omega_l_fine, omega_r_fine, ] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas, params.dt);
@@ -67,7 +67,7 @@ function resp = OptimCallbackRos1(~, req,resp)
         plot_dubins(p0, pf, params);
         fprintf(2,"NEW dubins\n")
         disp('Duration Tf')
-        Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max
+        Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max;
         resp.Tf = Tf;
     elseif strcmp(plan_type, "optim")    
         

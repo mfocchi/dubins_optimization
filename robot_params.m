@@ -17,8 +17,7 @@ params.gearbox = 34.45;
 params.model = 'LONGSIDE';
 
 
-RPM2RADS = 1/60*2*pi;
-params.omega_w_max = 18; % the decision variables are the wheel of the unycicle not the motors, these are 4.5 rad/s                                                                                               
+RPM2RADS = 1/60*2*pi;                                                              
 params.omega_max = inf; %will be determined by wheelmax speed
 params.omega_min = -inf;%will be determined by wheelmax speed
 params.v_max = 0.4;
@@ -34,7 +33,13 @@ params.width = 0.606; % [m]
 params.sprocket_radius = 0.0856; % [m]
 
 params.side_slippage_estimation = 'NET'; %NET EXP
+params.friction_coeff=0.1; %0.1, 0.4
 
+if params.friction_coeff == 0.1
+    params.omega_w_max = 10; % the decision variables are the wheel of the unycicle not the motors
+else 
+    params.omega_w_max = 18; % the decision variables are the wheel of the unycicle not the motors
+end
 
 % to debug: NN models for NN (will be loaded inside the long/side_slip_model.m)
 % alpha_model_forcodegen = loadLearnerForCoder('matlabNN/alpha_model_forcodegen'); 
