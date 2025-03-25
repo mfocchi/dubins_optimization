@@ -18,7 +18,7 @@ params.model = 'LONGSIDE';
 
 
 RPM2RADS = 1/60*2*pi;                                                              
-params.omega_max = inf; %will be determined by wheelmax speed
+params.omega_max = inf; %will be determined by wheelmax speed to have the result I had iun the past with the big curve I need to constraint to 0.4
 params.omega_min = -inf;%will be determined by wheelmax speed
 params.v_max = 0.4;
 params.v_min = 0.4; % if you want optimal control similar to dubins put vmax = vmin and use unicycle model
@@ -32,8 +32,8 @@ params.dt=0.001; % in matlab is used only to evaluate solution, but it will be s
 params.width = 0.606; % [m]
 params.sprocket_radius = 0.0856; % [m]
 
-params.side_slippage_estimation = 'NET'; %NET EXP
-params.friction_coeff=0.1; %0.1, 0.4
+params.side_slippage_estimation = 'EXP'; %NET EXP
+params.friction_coeff=0.4; %0.1, 0.4
 
 if params.friction_coeff == 0.1
     params.omega_w_max = 10; % the decision variables are the wheel of the unycicle not the motors
@@ -64,21 +64,21 @@ params.beta_slip_outer_coefficients_left =  [  0.0588 ,  -2.6375];
 params.beta_slip_inner_coefficients_right = [ -0.0618 ,   3.0089];
 params.beta_slip_outer_coefficients_right = [  0.0906,    3.7924];
 % 
-% 2-mid slippage
-% params.side_slip_angle_coefficients_left = [2*-0.3795,  0.5* -3.3784];
-% params.side_slip_angle_coefficients_right = [2*0.4587,   0.5* 3.8471];
-% params.beta_slip_inner_coefficients_left = [ 2*-0.0579,  0.5* -2.4456];
-% params.beta_slip_outer_coefficients_left =  [ 2* 0.0588 ,  0.5*-2.6375];
-% params.beta_slip_inner_coefficients_right = [ 2*-0.0618 ,   0.5*3.0089];
-% params.beta_slip_outer_coefficients_right = [2*  0.0906,    0.5*3.7924];
-% 
-% 
-% 3-high slippage
-% params.side_slip_angle_coefficients_left = [4*-0.3795,  0.25* -3.3784];
-% params.side_slip_angle_coefficients_right = [4*0.4587,   0.25* 3.8471];
-% params.beta_slip_inner_coefficients_left = [ 4*-0.0579,  0.25* -2.4456];
-% params.beta_slip_outer_coefficients_left =  [ 4* 0.0588 ,  0.25*-2.6375];
-% params.beta_slip_inner_coefficients_right = [ 4*-0.0618 ,   0.25*3.0089];
-% params.beta_slip_outer_coefficients_right = [4*  0.0906,    0.25*3.7924];
+% % 2-mid slippage
+params.side_slip_angle_coefficients_left = [3*-0.3795,  0.5* -3.3784];
+params.side_slip_angle_coefficients_right = [3*0.4587,   0.5* 3.8471];
+params.beta_slip_inner_coefficients_left = [ 3*-0.0579,  0.5* -2.4456];
+params.beta_slip_outer_coefficients_left =  [ 3* 0.0588 ,  0.5*-2.6375];
+params.beta_slip_inner_coefficients_right = [ 3*-0.0618 ,   0.5*3.0089];
+params.beta_slip_outer_coefficients_right = [3*  0.0906,    0.5*3.7924];
+
+% % 
+% % 3-high slippage
+params.side_slip_angle_coefficients_left = [4*-0.3795,  0.25* -3.3784];
+params.side_slip_angle_coefficients_right = [4*0.4587,   0.25* 3.8471];
+params.beta_slip_inner_coefficients_left = [ 4*-0.0579,  0.25* -2.4456];
+params.beta_slip_outer_coefficients_left =  [ 4* 0.0588 ,  0.25*-2.6375];
+params.beta_slip_inner_coefficients_right = [ 4*-0.0618 ,   0.25*3.0089];
+params.beta_slip_outer_coefficients_right = [4*  0.0906,    0.25*3.7924];
 % 
 

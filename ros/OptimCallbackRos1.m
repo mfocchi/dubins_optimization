@@ -47,6 +47,7 @@ function resp = OptimCallbackRos1(~, req,resp)
     [omega_l0, omega_r0, t_rough] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas);
 
     if strcmp(plan_type, "dubins")
+        tic
         %generate inputs from dubins om a fome grid (dt)
         [omega_l_fine, omega_r_fine, ] = getWheelVelocityParamsFromDubin(params, pathSegObj{1}.MotionLengths, omegas, params.dt);
         %integrate dubin on a fine grid (dt)
@@ -64,15 +65,17 @@ function resp = OptimCallbackRos1(~, req,resp)
         resp.Dt = params.dt;
         
 
-        plot_dubins(p0, pf, params);
+        %plot_dubins(p0, pf, params);
         fprintf(2,"NEW dubins\n")
         disp('Duration Tf')
         Tf = sum(pathSegObj{1}.MotionLengths)/params.v_max;
         resp.Tf = Tf;
+        toc
+        plot_dubins(p0, pf, params);  
     elseif strcmp(plan_type, "optim")    
         
         solution = optimize_cpp_mex(p0,  pf, omega_l0, omega_r0, t0,  params); 
-        plot_solution(solution,p0, pf, params, false);
+        %plot_solution(solution,p0, pf, params, false);
         %these vectors are too big to transfer to the robot TODO if you fix
         %C++  side then send these otherwise you can have integration
         %errors
@@ -92,6 +95,8 @@ function resp = OptimCallbackRos1(~, req,resp)
         solution.Tf
         disp('Achieved targetcl')
         solution.achieved_target
+        plot_solution(solution,p0, pf, params, false);   
+   
     else
         disp("wrong plan type")
     end
@@ -103,4 +108,5 @@ function resp = OptimCallbackRos1(~, req,resp)
     % resp.des_v(end-10:end)
     % resp.des_omega(end-10:end)
     % resp.dt
+    
 end

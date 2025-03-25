@@ -4,8 +4,11 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     p0 = p0(:);
     pf = pf(:);
        
-    % needs to be fixed for code generation
+    % unfortunately that needs to be fixed and cannot be parameters for code generation
     constr_tolerance = 1e-3;
+    max_func_evaluations = 5000;
+    max_iterations = 500;
+
 
     [v_input,omega_input] =  computeVelocitiesFromTracks(omega_l0, omega_r0, params);
     if  any(v_input >params.v_max) 
@@ -17,7 +20,8 @@ function solution = optimize_cpp(p0,  pf, omega_l0, omega_r0, t0, params)
     lb = [ 0  , -params.omega_w_max*ones(1,length(omega_l0)),  -params.omega_w_max*ones(1,length(omega_r0))];
     ub = [ params.t_max, params.omega_w_max*ones(1,length(omega_l0)),  params.omega_w_max*ones(1,length(omega_r0))];
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-    'MaxFunctionEvaluations', 5000, 'ConstraintTolerance',constr_tolerance);
+    'MaxFunctionEvaluations',  max_func_evaluations, 'ConstraintTolerance',constr_tolerance, ...
+    'MaxIterations', max_iterations);
 
     tic
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, params) , options);

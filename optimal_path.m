@@ -50,7 +50,7 @@ omegas = get_omega_from_dubins(pathSegObj{1}, params.v_max, 1/curvature_max);
 % 
 
 %gen code (run if you did some change in the cost)
-if ~isfile('optimize_cpp_mex.mexa64')
+if USEGENCODE && ~isfile('optimize_cpp_mex.mexa64')
     disp('Generating C++ code');
     cfg = coder.config('mex');
     cfg.IntegrityChecks = false;

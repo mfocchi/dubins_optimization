@@ -62,7 +62,7 @@ p0 = [0.0; 0.0; -0.];
 %FINAL STATE  (X,Y, THETA)
 pf = [2.; 2.5; -0.4];
 vmax = 0.4;
-plan_type = 'optim'; % 'optim' 'dubins'
+plan_type = 'dubins'; % 'optim' 'dubins'
 
 if strcmp(type_of_ros,'ros2')
     client = ros2svcclient(node_2,"/optim","optim_interfaces/Optim");
@@ -111,9 +111,9 @@ else
 
 
     if isServerAvailable(client)
-        tic
+        
         resp = call(client,req, "Timeout",120);
-        toc
+        
     else
         error("Service server not available on network")
     end
